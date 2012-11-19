@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/scrollView1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="3dip" >
+
+				<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginBottom="3dip"
+						android:orientation="horizontal" >
+
+						<Button
+								android:id="@+id/btnIntend"
+								android:layout_width="0dp"
+								android:layout_height="wrap_content"
+								android:layout_weight="1"
+								android:drawableLeft="@drawable/ic_action_camera"
+								android:text="@string/take_photo" />
+
+						<Button
+								android:id="@+id/buttonGallery"
+								android:layout_width="0dp"
+								android:layout_height="wrap_content"
+								android:layout_weight="1"
+								android:drawableLeft="@drawable/ic_action_gallery"
+								android:text="@string/pickGallery" />
+				</LinearLayout>
+
+				<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginBottom="10dip"
+						android:orientation="horizontal" >
+
+						<TextView
+								android:id="@+id/textView1"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="3dip"
+								android:text="@string/pic_category_label" />
+
+						<LinearLayout
+								android:layout_width="0dip"
+								android:layout_height="wrap_content"
+								android:layout_weight="1"
+								android:orientation="vertical" >
+
+								<Spinner
+										android:id="@+id/spinnerCat"
+										android:layout_width="fill_parent"
+										android:layout_height="wrap_content" />
+
+								<TextView
+										android:id="@+id/textViewCat"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_gravity="center_horizontal"
+										android:textAppearance="?android:attr/textAppearanceSmall" />
+						</LinearLayout>
+				</LinearLayout>
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginBottom="10dip"
+						android:orientation="vertical" >
+
+						<CheckBox
+								android:id="@+id/switchNoFigure"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:checked="true"
+								android:text="@string/linkFigure" />
+
+						<Spinner
+								android:id="@+id/spinner1"
+								android:layout_width="match_parent"
+								android:layout_height="wrap_content" />
+				</LinearLayout>
+
+				<ImageView
+						android:id="@+id/imageView1"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_margin="3dip"
+						android:contentDescription="@string/photo_description"
+						android:src="@drawable/tsuko"
+						android:visibility="visible" />
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:layout_marginTop="3dip"
+						android:orientation="horizontal" >
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:orientation="vertical" >
+
+								<CheckBox
+										android:id="@+id/switch1"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:text="@string/photo_nsfw" />
+						</LinearLayout>
+
+						<Button
+								android:id="@+id/buttonSendPhoto"
+								android:layout_width="0dip"
+								android:layout_height="wrap_content"
+								android:layout_marginTop="3dip"
+								android:layout_weight="1"
+								android:text="@string/send_photo" />
+				</LinearLayout>
+		</LinearLayout>
+
+</ScrollView>

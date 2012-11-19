@@ -1,0 +1,18 @@
+package net.myfigurecollection.android.data;
+
+import android.content.SearchRecentSuggestionsProvider;
+
+
+/**
+ * 
+ * @author Climbatize
+ *
+ */
+public class SearchFigureProvider extends SearchRecentSuggestionsProvider {
+    public final static String AUTHORITY = "net.myfigurecollection.SearchFigureProvider";
+    public final static int    MODE      = DATABASE_MODE_QUERIES | DATABASE_MODE_2LINES;
+
+    public SearchFigureProvider() {
+        setupSuggestions(AUTHORITY, MODE);
+    }
+}

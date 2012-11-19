@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/55/trunk/src/net/myfigurecollection/android/data/storage
+END
+BaseAlbumDirFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/55/trunk/src/net/myfigurecollection/android/data/storage/BaseAlbumDirFactory.java
+END
+FroyoAlbumDirFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/55/trunk/src/net/myfigurecollection/android/data/storage/FroyoAlbumDirFactory.java
+END
+AlbumStorageDirFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/55/trunk/src/net/myfigurecollection/android/data/storage/AlbumStorageDirFactory.java
+END

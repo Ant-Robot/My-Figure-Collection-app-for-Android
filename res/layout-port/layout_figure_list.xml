@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="#0000"
+        android:fastScrollEnabled="true"
+        android:paddingTop="115dip"
+        android:persistentDrawingCache="all"
+        android:scrollingCache="true"
+        android:smoothScrollbar="false"
+        android:stackFromBottom="true" >
+    </ListView>
+
+    <FrameLayout
+        android:id="@+id/TopBanner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/ImageView01"
+            android:layout_width="fill_parent"
+            android:layout_height="160dip"
+            android:background="@drawable/topmenu" >
+        </ImageView>
+
+        <Gallery
+            android:id="@+id/Gallery01"
+            android:layout_width="fill_parent"
+            android:layout_height="120dip" >
+        </Gallery>
+
+        <TextView
+            android:id="@+id/TextSearch"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="20dip"
+            android:gravity="center"
+            android:text="@string/results"
+            android:textColor="#FFF"
+            android:textSize="20sp" >
+        </TextView>
+    </FrameLayout>
+
+</FrameLayout>

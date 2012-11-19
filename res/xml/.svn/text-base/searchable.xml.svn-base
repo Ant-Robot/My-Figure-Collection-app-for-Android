@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:label="@string/app_name"
+		android:hint="@string/search_hint"
+		android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+		android:searchSuggestAuthority="net.myfigurecollection.SearchFigureProvider"
+		android:searchSuggestSelection=" ?"
+		android:searchSettingsDescription="@string/settings_description"
+		android:includeInGlobalSearch="true" android:searchSuggestIntentAction="android.intent.action.SEARCH">
+</searchable>
