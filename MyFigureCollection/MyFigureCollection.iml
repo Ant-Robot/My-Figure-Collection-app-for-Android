@@ -70,8 +70,13 @@
     <orderEntry type="jdk" jdkName="Android API 18 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="support-v4-18.0.0" level="project" />
+    <orderEntry type="library" exported="" name="robospice-1.4.9" level="project" />
     <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71800.aar" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
+    <orderEntry type="library" exported="" name="javax.annotation-api-1.2-b03" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-gson-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="robospice-google-http-client-1.4.6" level="project" />
+    <orderEntry type="library" exported="" name="commons-lang-2.6" level="project" />
   </component>
 </module>
 

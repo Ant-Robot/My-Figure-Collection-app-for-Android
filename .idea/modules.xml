@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyFigureCollection/MyFigureCollection.iml" filepath="$PROJECT_DIR$/MyFigureCollection/MyFigureCollection.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyFigureCollectionProject.iml" filepath="$PROJECT_DIR$/MyFigureCollectionProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my-figure-collection-for-android.iml" filepath="$PROJECT_DIR$/my-figure-collection-for-android.iml" />
     </modules>
   </component>
 </project>
