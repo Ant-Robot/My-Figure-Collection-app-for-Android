@@ -28,14 +28,18 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api:1.2-b03@jar'
     compile 'commons-lang:commons-lang:2.6@jar'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.http-client:google-http-client:1.17.0-rc@jar'
+    compile 'com.google.http-client:google-http-client-android:1.17.0-rc@jar'
     compile ('com.google.http-client:google-http-client-gson:1.17.0-rc@jar')
             {
-                exclude module: 'xpp3:xpp3'
-                exclude module: 'stax:stax-api'
+                exclude module: 'xpp3'
+                exclude module: 'stax-api'
             }
     compile ('com.octo.android.robospice:robospice:1.4.9@jar')
             {
-                exclude group: 'com.google.android'
+                exclude module: 'support-v4'
             }
     compile 'com.octo.android.robospice:robospice-google-http-client:1.4.6@jar'
+    compile 'com.octo.android.robospice:robospice-ui-spicelist:1.4.6@jar'
+    compile 'com.octo.android.robospice:robospice-cache:1.4.9@jar'
 }

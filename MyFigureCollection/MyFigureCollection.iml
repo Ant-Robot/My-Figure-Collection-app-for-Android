@@ -72,6 +72,10 @@
     <orderEntry type="library" exported="" name="support-v4-18.0.0" level="project" />
     <orderEntry type="library" exported="" name="robospice-1.4.9" level="project" />
     <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71800.aar" level="project" />
+    <orderEntry type="library" exported="" name="robospice-cache-1.4.9" level="project" />
+    <orderEntry type="library" exported="" name="robospice-ui-spicelist-1.4.6" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-android-1.17.0-rc" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="javax.annotation-api-1.2-b03" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-gson-1.17.0-rc" level="project" />

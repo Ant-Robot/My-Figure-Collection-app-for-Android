@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +19,15 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.octo.android.robospice.GsonGoogleHttpClientSpiceService;
+import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.request.listener.RequestListener;
+
+import net.myfigurecollection.api.CollectionMode;
+import net.myfigurecollection.api.request.CollectionRequest;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -26,6 +36,7 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -45,6 +56,19 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -107,6 +131,34 @@ public class MainActivity extends ActionBarActivity
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends ListFragment {
+        private SpiceManager contentManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
+        @Override
+        public void onStart() {
+            super.onStart();
+            contentManager.start( getActivity() );
+           // contentManager.addListenerIfPending(String.class, wordField.getText().toString(), new ReverseStringRequestListener());
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            PlaceholderFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
+
+
+            CollectionRequest request = new CollectionRequest("Climbatize","0","0","0");
+            contentManager.execute( request, request.createCacheKey(), DurationInMillis.ALWAYS_RETURNED, new CollectionRequestListener() );
+
+        }
+
+        @Override
+        public void onStop() {
+            if (contentManager.isStarted()) {
+                contentManager.shouldStop();
+            }
+            super.onStop();
+        }
+
+
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -143,6 +195,25 @@ public class MainActivity extends ActionBarActivity
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
+
+        public class CollectionRequestListener implements RequestListener<CollectionMode> {
+            @Override
+            public void onRequestFailure(com.octo.android.robospice.persistence.exception.SpiceException spiceException) {
+                Toast.makeText(getActivity(), "Error during request: " + spiceException.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onRequestSuccess(CollectionMode collectionMode) {
+                PlaceholderFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+                if ( collectionMode == null && collectionMode.getCollection() == null ) {
+                    return;
+                }
+
+                Log.d("MFC",collectionMode.toString());
+            }
+        }
     }
+
+
 
 }
