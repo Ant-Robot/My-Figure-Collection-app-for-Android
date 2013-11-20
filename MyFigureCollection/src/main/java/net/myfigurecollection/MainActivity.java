@@ -130,14 +130,8 @@ public class MainActivity extends ActionBarActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends ListFragment {
-        private SpiceManager contentManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
-        @Override
-        public void onStart() {
-            super.onStart();
-            contentManager.start( getActivity() );
-           // contentManager.addListenerIfPending(String.class, wordField.getText().toString(), new ReverseStringRequestListener());
-        }
+    public static class PlaceholderFragment extends SpiceListFragment {
+
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -146,17 +140,10 @@ public class MainActivity extends ActionBarActivity
 
 
             CollectionRequest request = new CollectionRequest("Climbatize","0","0","0");
-            contentManager.execute( request, request.createCacheKey(), DurationInMillis.ALWAYS_RETURNED, new CollectionRequestListener() );
+            spiceManager.execute( request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new CollectionRequestListener() );
 
         }
 
-        @Override
-        public void onStop() {
-            if (contentManager.isStarted()) {
-                contentManager.shouldStop();
-            }
-            super.onStop();
-        }
 
 
         /**

@@ -1,21 +1,27 @@
 
 package net.myfigurecollection.api;
 
+import com.google.api.client.util.Key;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
-import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class SearchMode {
 
+    @Key
     @Expose
     private String name;
+    @Key
     @Expose
     private String version;
+    @Key
     @Expose
     private String num_results;
+    @Key
     @Expose
     private List<Item> item = new ArrayList<Item>();
 

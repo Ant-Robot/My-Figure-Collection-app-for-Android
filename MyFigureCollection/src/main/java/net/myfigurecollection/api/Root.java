@@ -2,15 +2,17 @@
 package net.myfigurecollection.api;
 
 import javax.annotation.Generated;
+
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Root {
 
-    @Expose
+    @Key @Expose
     private String id;
-    @Expose
+    @Key @Expose
     private String name;
 
     public String getId() {

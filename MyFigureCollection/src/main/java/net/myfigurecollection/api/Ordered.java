@@ -1,21 +1,29 @@
 
 package net.myfigurecollection.api;
 
+import com.google.api.client.util.Key;
+import com.google.gson.annotations.Expose;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Generated;
-import com.google.gson.annotations.Expose;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Ordered {
 
+    @Key
     @Expose
     private String link;
+    @Key
     @Expose
     private String num_items;
+    @Key
     @Expose
     private String num_pages;
+    @Key
     @Expose
     private List<Item> item = new ArrayList<Item>();
 

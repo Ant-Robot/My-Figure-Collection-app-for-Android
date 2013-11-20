@@ -2,18 +2,25 @@
 package net.myfigurecollection.api;
 
 import javax.annotation.Generated;
+
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class User {
 
+    @Key
     @Expose
     private String id;
+    @Key
     @Expose
     private String name;
+    @Key
     @Expose
     private String picture;
+    @Key
     @Expose
     private String homepage;
 

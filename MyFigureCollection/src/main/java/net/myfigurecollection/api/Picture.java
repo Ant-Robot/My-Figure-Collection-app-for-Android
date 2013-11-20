@@ -1,29 +1,41 @@
 
 package net.myfigurecollection.api;
 
-import javax.annotation.Generated;
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import javax.annotation.Generated;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Picture {
 
+    @Key
     @Expose
     private String id;
+    @Key
     @Expose
     private String src;
+    @Key
     @Expose
     private String author;
+    @Key
     @Expose
     private String date;
+    @Key
     @Expose
     private Category category;
+    @Key
     @Expose
     private Resolution resolution;
+    @Key
     @Expose
     private String size;
+    @Key
     @Expose
     private Title title;
+    @Key
     @Expose
     private String nsfw;
 

@@ -1,18 +1,20 @@
 
 package net.myfigurecollection.api;
 
-import javax.annotation.Generated;
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
+import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Mycollection {
 
-    @Expose
+    @Key @Expose
     private String number;
-    @Expose
+    @Key @Expose
     private String score;
-    @Expose
+    @Key @Expose
     private String wishability;
 
     public String getNumber() {

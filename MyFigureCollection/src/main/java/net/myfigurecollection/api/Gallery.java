@@ -1,20 +1,22 @@
 
 package net.myfigurecollection.api;
 
+import com.google.api.client.util.Key;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
-import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Gallery {
 
-    @Expose
+    @Key @Expose
     private String num_pictures;
-    @Expose
+    @Key @Expose
     private String num_pages;
-    @Expose
+    @Key @Expose
     private List<Picture> picture = new ArrayList<Picture>();
 
     public String getNum_pictures() {

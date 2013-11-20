@@ -2,15 +2,18 @@
 package net.myfigurecollection.api;
 
 import javax.annotation.Generated;
+
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Resolution {
 
-    @Expose
+    @Key @Expose
     private String width;
-    @Expose
+    @Key @Expose
     private String height;
 
     public String getWidth() {

@@ -1,22 +1,24 @@
 
 package net.myfigurecollection.api;
 
+import com.google.api.client.util.Key;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
-import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Wished {
 
-    @Expose
+    @Key @Expose
     private String link;
-    @Expose
+    @Key @Expose
     private String num_items;
-    @Expose
+    @Key @Expose
     private String num_pages;
-    @Expose
+    @Key @Expose
     private List<Item> item = new ArrayList<Item>();
 
     public String getLink() {

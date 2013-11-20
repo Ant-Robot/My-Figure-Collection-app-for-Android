@@ -2,25 +2,27 @@
 package net.myfigurecollection.api;
 
 import javax.annotation.Generated;
+
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Data {
 
-    @Expose
+    @Key @Expose
     private String id;
-    @Expose
+    @Key @Expose
     private String jan;
-    @Expose
-    private Isbn isbn;
-    @Expose
-    private Catalog catalog;
-    @Expose
+    @Key @Expose
+    private String isbn;
+    @Key @Expose
+    private String catalog;
+    @Key @Expose
     private String name;
-    @Expose
+    @Key @Expose
     private String release_date;
-    @Expose
+    @Key @Expose
     private String price;
 
     public String getId() {
@@ -39,19 +41,19 @@ public class Data {
         this.jan = jan;
     }
 
-    public Isbn getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(Isbn isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
-    public Catalog getCatalog() {
+    public String getCatalog() {
         return catalog;
     }
 
-    public void setCatalog(Catalog catalog) {
+    public void setCatalog(String catalog) {
         this.catalog = catalog;
     }
 

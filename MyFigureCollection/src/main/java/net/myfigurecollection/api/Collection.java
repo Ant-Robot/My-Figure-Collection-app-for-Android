@@ -1,18 +1,20 @@
 
 package net.myfigurecollection.api;
 
-import javax.annotation.Generated;
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
+import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Collection {
 
-    @Expose
+    @Key @Expose
     private String link;
-    @Expose
+    @Key @Expose
     private Ordered ordered;
-    @Expose
+    @Key @Expose
     private Wished wished;
 
     public String getLink() {

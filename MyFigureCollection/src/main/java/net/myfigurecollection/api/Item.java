@@ -1,20 +1,22 @@
 
 package net.myfigurecollection.api;
 
-import javax.annotation.Generated;
+import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
+
+import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Item {
 
-    @Expose
+    @Key @Expose
     private Root root;
-    @Expose
+    @Key @Expose
     private Category category;
-    @Expose
+    @Key @Expose
     private Data data;
-    @Expose
+    @Key @Expose
     private Mycollection mycollection;
 
     public Root getRoot() {
