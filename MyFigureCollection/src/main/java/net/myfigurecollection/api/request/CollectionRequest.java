@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
+ * Returned items are limited to 50 but you can access full collections by modifying the page param.
+ *
  * Created by Climbatize on 18/11/13.
  */
 public class CollectionRequest extends GoogleHttpClientSpiceRequest<CollectionMode> {
@@ -43,7 +45,7 @@ public class CollectionRequest extends GoogleHttpClientSpiceRequest<CollectionMo
 
        // String url = uriBuilder.build().toString();
         String url;
-        url = String.format("http://myfigurecollection.net/api.php?mode=%s&username=%s&type=%s&status=%s&page=%s&root=%s", MODE, mUsername, REQUEST_TYPE, mStatus, mPage, mRoot);
+        url = String.format(URL_TEMPLATE, MODE, mUsername, REQUEST_TYPE, mStatus, mPage, mRoot);
         Log.d("URL",url);
 
 

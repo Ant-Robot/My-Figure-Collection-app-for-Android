@@ -1,21 +1,21 @@
-package net.myfigurecollection;
+package net.myfigurecollection.widgets;
 
-import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
 
 import com.octo.android.robospice.GsonGoogleHttpClientSpiceService;
 import com.octo.android.robospice.SpiceManager;
 
 /**
- * Created by Climbatize on 19/11/13.
+ * Created by Climbatize on 21/11/13.
  */
-public class SpiceListFragment extends ListFragment {
+public class SpiceActionBarActivity extends ActionBarActivity {
 
     protected SpiceManager spiceManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
 
     @Override
     public void onStart() {
         super.onStart();
-        spiceManager.start(this.getActivity());
+        spiceManager.start(this);
     }
 
     @Override
