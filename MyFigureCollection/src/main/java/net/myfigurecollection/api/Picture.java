@@ -34,7 +34,7 @@ public class Picture {
     private String size;
     @Key
     @Expose
-    private Title title;
+    private String title;
     @Key
     @Expose
     private String nsfw;
@@ -95,11 +95,11 @@ public class Picture {
         this.size = size;
     }
 
-    public Title getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(Title title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
