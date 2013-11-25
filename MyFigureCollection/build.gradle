@@ -13,8 +13,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion '18.1.1'
+    compileSdkVersion 19
+    buildToolsVersion '19'
 
     defaultConfig {
         minSdkVersion 9
@@ -23,8 +23,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:18.0.0'
-    compile 'com.android.support:support-v4:18.0.0'
     compile 'javax.annotation:javax.annotation-api:1.2-b03@jar'
     compile 'commons-lang:commons-lang:2.6@jar'
     compile 'com.google.code.gson:gson:2.2.4'
@@ -42,4 +40,6 @@ dependencies {
     compile 'com.octo.android.robospice:robospice-google-http-client:1.4.6@jar'
     compile 'com.octo.android.robospice:robospice-ui-spicelist:1.4.6@jar'
     compile 'com.octo.android.robospice:robospice-cache:1.4.9@jar'
+    compile 'com.android.support:appcompat-v7:19.0.+'
+    compile 'com.android.support:support-v4:19.0.+'
 }
