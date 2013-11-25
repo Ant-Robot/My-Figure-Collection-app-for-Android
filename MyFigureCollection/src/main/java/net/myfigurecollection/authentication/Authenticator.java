@@ -3,10 +3,8 @@ package net.myfigurecollection.authentication;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
-import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 /**
@@ -29,13 +27,13 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s2, String[] strings, Bundle bundle) throws NetworkErrorException {
-        final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
+        /*final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
         intent.putExtra(AuthenticatorActivity.ARG_ACCOUNT_TYPE, accountType);
         intent.putExtra(AuthenticatorActivity.ARG_AUTH_TYPE, authTokenType);
         intent.putExtra(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);*/
         final Bundle opt = new Bundle();
-        opt.putParcelable(AccountManager.KEY_INTENT, intent);
+        //opt.putParcelable(AccountManager.KEY_INTENT, intent);
         return opt;
     }
 
