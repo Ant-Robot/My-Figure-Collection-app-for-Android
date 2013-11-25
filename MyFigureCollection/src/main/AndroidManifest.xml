@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -30,6 +31,17 @@
         <service
             android:name="com.octo.android.robospice.GsonGoogleHttpClientSpiceService"
             android:exported="false" />
+
+        <activity android:name=".authentication.AuthenticatorActivity" android:label="@string/login_label"/>
+        <activity android:name=".authentication.SignUpActivity" android:label="@string/signup_title" />
+
+        <service android:name=".authentication.UdinicAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
     </application>
 
 </manifest>
