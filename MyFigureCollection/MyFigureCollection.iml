@@ -76,9 +76,11 @@
     <orderEntry type="library" exported="" name="google-http-client-android-1.17.0-rc" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
     <orderEntry type="library" exported="" name="javax.annotation-api-1.2-b03" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-19.0.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-gson-1.17.0-rc" level="project" />
     <orderEntry type="library" exported="" name="robospice-google-http-client-1.4.6" level="project" />
     <orderEntry type="library" exported="" name="commons-lang-2.6" level="project" />
+    <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71900.aar" level="project" />
   </component>
 </module>
 
