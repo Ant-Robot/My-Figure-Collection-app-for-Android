@@ -11,6 +11,8 @@ import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpice
 
 import net.myfigurecollection.api.GalleryMode;
 
+import hugo.weaving.DebugLog;
+
 /**
  * Returned items are limited to 20 but you can access full galleries by modifying the page param.
  *
@@ -70,6 +72,7 @@ public class GalleryRequest extends GoogleHttpClientSpiceRequest<GalleryMode> {
      *
      * @return
      */
+    @DebugLog
     public String createCacheKey() {
         if (mUsername != null)
             return MODE + "." + mUsername + "." + mPage;

@@ -16,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import hugo.weaving.DebugLog;
+
 /**
  * Returned items are limited to 50 but you can access full collections by modifying the page param.
  *
@@ -67,6 +69,7 @@ public class CollectionRequest extends GoogleHttpClientSpiceRequest<CollectionMo
      *
      * @return
      */
+    @DebugLog
     public String createCacheKey() {
         return MODE + "." + mUsername + "." + mPage + "." + mStatus + "." + mRoot;
     }

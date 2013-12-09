@@ -12,6 +12,8 @@ import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpice
 
 import net.myfigurecollection.api.UserMode;
 
+import hugo.weaving.DebugLog;
+
 
 /**
  * Returned items are limited to 20.
@@ -60,6 +62,7 @@ public class UserRequest extends GoogleHttpClientSpiceRequest<UserMode> {
      *
      * @return
      */
+    @DebugLog
     public String createCacheKey() {
         return MODE + "." + mUser;
     }

@@ -8,6 +8,8 @@ import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.myfigurecollection.api.CollectionMode;
 
+import hugo.weaving.DebugLog;
+
 /**
  * Created by Climbatize on 21/11/13.
  */
@@ -24,12 +26,13 @@ public class MFCRequestListener<T> implements RequestListener<T> {
     }
 
     @Override
-    public void onRequestSuccess(T collectionMode) {
+    @DebugLog
+    public void onRequestSuccess(T response) {
         fragment.getActivity().setProgressBarIndeterminateVisibility(false);
-        if (collectionMode == null) {
+        if (response == null) {
             return;
         }
-
-        Log.d("MFC", collectionMode.toString());
     }
+
+
 }
