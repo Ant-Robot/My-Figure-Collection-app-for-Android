@@ -11,14 +11,26 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
+import com.google.api.client.http.UrlEncodedContent;
+import com.google.api.client.http.apache.ApacheHttpTransport;
 
-import static net.myfigurecollection.authentication.AccountGeneral.*;
+import net.myfigurecollection.api.request.ConnectionRequest;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
 import static net.myfigurecollection.authentication.AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
 import static net.myfigurecollection.authentication.AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS_LABEL;
 import static net.myfigurecollection.authentication.AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY;
 import static net.myfigurecollection.authentication.AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY_LABEL;
-import static net.myfigurecollection.authentication.AccountGeneral.sServerAuthenticate;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,12 +38,12 @@ import static net.myfigurecollection.authentication.AccountGeneral.sServerAuthen
  * Date: 19/03/13
  * Time: 18:58
  */
-public class UdinicAuthenticator extends AbstractAccountAuthenticator {
+public class MFCAuthenticator extends AbstractAccountAuthenticator {
 
-    private String TAG = "UdinicAuthenticator";
     private final Context mContext;
+    private String TAG = "MFCAuthenticator";
 
-    public UdinicAuthenticator(Context context) {
+    public MFCAuthenticator(Context context) {
         super(context);
 
         // I hate you! Google - set mContext as protected!
@@ -40,7 +52,7 @@ public class UdinicAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        Log.d("udinic", TAG + "> addAccount");
+        Log.d("climbatize", TAG + "> addAccount");
 
         final Intent intent = new Intent(mContext, AuthenticatorActivity.class);
         intent.putExtra(AuthenticatorActivity.ARG_ACCOUNT_TYPE, accountType);
@@ -56,7 +68,7 @@ public class UdinicAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
 
-        Log.d("udinic", TAG + "> getAuthToken");
+        Log.d("climbatize", TAG + "> getAuthToken");
 
         // If the caller requested an authToken type we don't support, then
         // return an error
@@ -70,17 +82,54 @@ public class UdinicAuthenticator extends AbstractAccountAuthenticator {
         // the server for an appropriate AuthToken.
         final AccountManager am = AccountManager.get(mContext);
 
-        String authToken = am.peekAuthToken(account, authTokenType);
+        String authToken = null;
 
-        Log.d("udinic", TAG + "> peekAuthToken returned - " + authToken);
+
+        Log.d("climbatize", TAG + "> peekAuthToken returned - " + authToken);
 
         // Lets give another try to authenticate the user
         if (TextUtils.isEmpty(authToken)) {
             final String password = am.getPassword(account);
             if (password != null) {
                 try {
-                    Log.d("udinic", TAG + "> re-authenticating with the existing password");
-                    authToken = sServerAuthenticate.userSignIn(account.name, password, authTokenType);
+                    Log.d("climbatize", TAG + "> re-authenticating with the existing password");
+
+
+                    HttpRequest request = null;
+                    HttpTransport transport = new ApacheHttpTransport();
+                    HttpRequestFactory requestFactory = transport.createRequestFactory();
+                    GenericUrl gUrl = new GenericUrl(ConnectionRequest.URL);
+
+
+                    Map<String, String> params = new TreeMap<String, String>();
+                    params.put("username", account.name);
+                    params.put("password", password);
+                    params.put("set_cookie", "1");
+                    params.put("commit", "signin");
+                    params.put("location", "http://myfigurecollection.net/");
+
+                    UrlEncodedContent content = new UrlEncodedContent(params);
+
+
+                    request = requestFactory.buildPostRequest(gUrl, content);
+
+
+                    final String[] res = {null};
+
+                    //Paradoxically MFC return a 302 found status to the connection request success
+                    request.setUnsuccessfulResponseHandler(new HttpUnsuccessfulResponseHandler() {
+                        @Override
+                        public boolean handleResponse(HttpRequest httpRequest, HttpResponse httpResponse, boolean b) throws IOException {
+
+                            res[0] = httpResponse.getHeaders().get("Set-Cookie").toString();
+
+                            return false;
+                        }
+                    });
+
+                    HttpResponse response2 = request.execute();
+
+                    authToken = res[0];
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -108,7 +157,6 @@ public class UdinicAuthenticator extends AbstractAccountAuthenticator {
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
         return bundle;
     }
-
 
     @Override
     public String getAuthTokenLabel(String authTokenType) {

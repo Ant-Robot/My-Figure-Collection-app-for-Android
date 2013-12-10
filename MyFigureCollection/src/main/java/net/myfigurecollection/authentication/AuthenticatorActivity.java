@@ -10,27 +10,31 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import static net.myfigurecollection.authentication.AccountGeneral.*;
+
+import com.octo.android.robospice.GsonGoogleHttpClientSpiceService;
+import com.octo.android.robospice.SpiceManager;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.myfigurecollection.R;
+import net.myfigurecollection.api.request.ConnectionRequest;
+import net.myfigurecollection.api.request.listener.MFCRequestListener;
+
 
 /**
  * Created by Climbatize on 22/11/13.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity {
+public class AuthenticatorActivity extends AccountAuthenticatorActivity implements RequestListener<String> {
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
     public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
-
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
-
     public final static String PARAM_USER_PASS = "USER_PASS";
-
     private final int REQ_SIGNUP = 1;
-
-    private final String TAG = this.getClass().getSimpleName();
-
+    private final String TAG = "MFC Authenticator";
+    protected SpiceManager spiceManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
     private AccountManager mAccountManager;
     private String mAuthTokenType;
 
@@ -49,7 +53,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             mAuthTokenType = AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS;
 
         if (accountName != null) {
-            ((TextView)findViewById(R.id.accountName)).setText(accountName);
+            ((TextView) findViewById(R.id.accountName)).setText(accountName);
         }
 
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
@@ -63,11 +67,24 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             public void onClick(View v) {
                 // Since there can only be one AuthenticatorActivity, we call the sign up activity, get his results,
                 // and return them in setAccountAuthenticatorResult(). See finishLogin().
-                Intent signup = new Intent(getBaseContext(), SignUpActivity.class);
+                /*Intent signup = new Intent(getBaseContext(), SignUpActivity.class);
                 signup.putExtras(getIntent().getExtras());
-                startActivityForResult(signup, REQ_SIGNUP);
+                startActivityForResult(signup, REQ_SIGNUP);*/
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        spiceManager.start(this);
+    }
+
+    @Override
+    protected void onStop() {
+        spiceManager.shouldStop();
+        super.onStop();
+
     }
 
     @Override
@@ -84,55 +101,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
         final String userName = ((TextView) findViewById(R.id.accountName)).getText().toString();
         final String userPass = ((TextView) findViewById(R.id.accountPassword)).getText().toString();
-
         final String accountType = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
-
-        new AsyncTask<String, Void, Intent>() {
-
-            @Override
-            protected Intent doInBackground(String... params) {
-
-                Log.d("udinic", TAG + "> Started authenticating");
-
-                String authtoken = null;
-                Bundle data = new Bundle();
-                try {
-                    authtoken = sServerAuthenticate.userSignIn(userName, userPass, mAuthTokenType);
-
-                    data.putString(AccountManager.KEY_ACCOUNT_NAME, userName);
-                    data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-                    data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
-                    data.putString(PARAM_USER_PASS, userPass);
-
-                } catch (Exception e) {
-                    data.putString(KEY_ERROR_MESSAGE, e.getMessage());
-                }
-
-                final Intent res = new Intent();
-                res.putExtras(data);
-                return res;
-            }
-
-            @Override
-            protected void onPostExecute(Intent intent) {
-                if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
-                    Toast.makeText(getBaseContext(), intent.getStringExtra(KEY_ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
-                } else {
-                    finishLogin(intent);
-                }
-            }
-        }.execute();
-    }
+        ConnectionRequest request4 = new ConnectionRequest(userName, userPass);
+        spiceManager.execute(request4, request4.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, this);
+   }
 
     private void finishLogin(Intent intent) {
-        Log.d("udinic", TAG + "> finishLogin");
+        Log.d("climbatize", TAG + "> finishLogin");
 
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
         final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
 
         if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-            Log.d("udinic", TAG + "> finishLogin > addAccountExplicitly");
+            Log.d("climbatize", TAG + "> finishLogin > addAccountExplicitly");
             String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
             String authtokenType = mAuthTokenType;
 
@@ -141,12 +123,52 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             mAccountManager.addAccountExplicitly(account, accountPassword, null);
             mAccountManager.setAuthToken(account, authtokenType, authtoken);
         } else {
-            Log.d("udinic", TAG + "> finishLogin > setPassword");
+            Log.d("climbatize", TAG + "> finishLogin > setPassword");
             mAccountManager.setPassword(account, accountPassword);
         }
 
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onRequestFailure(SpiceException e) {
+
+    }
+
+    @Override
+    public void onRequestSuccess(String t) {
+        final String userName = ((TextView) findViewById(R.id.accountName)).getText().toString();
+        final String userPass = ((TextView) findViewById(R.id.accountPassword)).getText().toString();
+        final String accountType = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
+
+        String authtoken = t;
+        Bundle data = new Bundle();
+        try {
+            //authtoken = sServerAuthenticate.userSignIn(userName, userPass, mAuthTokenType);
+
+            data.putString(AccountManager.KEY_ACCOUNT_NAME, userName);
+            data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+            data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
+            data.putString(PARAM_USER_PASS, userPass);
+
+            Log.d("climbatize", TAG + "> LoginCookie > " + t);
+
+        } catch (Exception e) {
+            data.putString(KEY_ERROR_MESSAGE, e.getMessage());
+        }
+          
+        if (authtoken==null)data.putString(KEY_ERROR_MESSAGE, "Wrong login/password");
+
+        final Intent res = new Intent();
+        res.putExtras(data);
+
+        if (res.hasExtra(KEY_ERROR_MESSAGE)) {
+            Toast.makeText(getBaseContext(), res.getStringExtra(KEY_ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
+        } else {
+            finishLogin(res);
+        }
+
     }
 }
