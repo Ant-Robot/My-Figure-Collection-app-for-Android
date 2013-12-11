@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -17,15 +16,7 @@ import net.myfigurecollection.MainActivity;
 import net.myfigurecollection.R;
 import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
-import net.myfigurecollection.api.GalleryMode;
-import net.myfigurecollection.api.SearchMode;
-import net.myfigurecollection.api.UserMode;
 import net.myfigurecollection.api.request.CollectionRequest;
-import net.myfigurecollection.api.request.ConnectionRequest;
-import net.myfigurecollection.api.request.GalleryRequest;
-import net.myfigurecollection.api.request.SearchRequest;
-import net.myfigurecollection.api.request.UserRequest;
-import net.myfigurecollection.api.request.listener.MFCRequestListener;
 import net.myfigurecollection.widgets.SpiceListFragment;
 
 /**
@@ -77,18 +68,19 @@ public class PlaceholderFragment extends SpiceListFragment implements RequestLis
 
 
         CollectionRequest request = new CollectionRequest("Climbatize", "0", "0", "0");
-        SearchRequest request1 = new SearchRequest("Saber");
+        spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, this);
+
+        /*SearchRequest request1 = new SearchRequest("Saber");
         GalleryRequest request2 = new GalleryRequest("Climbatize", "0");
         UserRequest request3 = new UserRequest("Climbatize");
         ConnectionRequest request4 = new ConnectionRequest("Climbatize","160184");
-        /*spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<CollectionMode>(this));
+        spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<CollectionMode>(this));
         spiceManager.execute(request1, request1.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<SearchMode>(this));
         spiceManager.execute(request2, request2.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<GalleryMode>(this));
         spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<UserMode>(this));
         spiceManager.execute(request4, request4.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<String>(this));
     */
 
-        spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, this);
 
     }
 

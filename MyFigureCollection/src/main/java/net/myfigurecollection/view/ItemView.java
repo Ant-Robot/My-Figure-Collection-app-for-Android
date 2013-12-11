@@ -5,7 +5,9 @@ package net.myfigurecollection.view;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ public class ItemView extends RelativeLayout implements SpiceListItemView<Item> 
     private TextView itemNameTextView;
     private TextView itemContentTextView;
     private ImageView thumbImageView;
+    private View colorView;
     private Item item;
 
     public ItemView(Context context) {
@@ -32,6 +35,7 @@ public class ItemView extends RelativeLayout implements SpiceListItemView<Item> 
         this.itemNameTextView = (TextView) this.findViewById(R.id.item_name_textview);
         this.itemContentTextView = (TextView) this.findViewById(R.id.item_content_textview);
         this.thumbImageView = (ImageView) this.findViewById(R.id.octo_thumbnail_imageview);
+        this.colorView = this.findViewById(R.id.view_category);
     }
 
     @Override
@@ -39,6 +43,7 @@ public class ItemView extends RelativeLayout implements SpiceListItemView<Item> 
         this.item = item;
         itemNameTextView.setText(item.getData().getName());
         itemContentTextView.setText(String.valueOf(item.getData().getPrice()));
+        colorView.setBackgroundColor(Color.parseColor(item.getCategory().getColor()));
     }
 
     @Override

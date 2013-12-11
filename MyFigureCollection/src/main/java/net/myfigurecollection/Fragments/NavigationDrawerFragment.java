@@ -6,10 +6,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -23,21 +23,37 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.GsonBuilder;
+import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.octo.android.robospice.request.okhttp.simple.OkHttpBitmapRequest;
+import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
+
 import net.myfigurecollection.R;
+import net.myfigurecollection.api.User;
+import net.myfigurecollection.api.UserMode;
+import net.myfigurecollection.api.request.UserRequest;
+import net.myfigurecollection.api.request.listener.MFCRequestListener;
 import net.myfigurecollection.authentication.AccountGeneral;
 import net.myfigurecollection.authentication.AuthenticatorActivity;
+import net.myfigurecollection.widgets.SpiceFragment;
 
-;
+import java.io.File;
+
+import hugo.weaving.DebugLog;
+
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends SpiceFragment implements RequestListener<UserMode> {
 
     /**
      * Remember the position of the selected item.
@@ -48,6 +64,7 @@ public class NavigationDrawerFragment extends Fragment {
      * expands it. This shared preference tracks this.
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    private static final Object AVATAR_ROOT = "http://s1.tsuki-board.net/pics/avatar/200/";
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -65,6 +82,7 @@ public class NavigationDrawerFragment extends Fragment {
     private View header;
     private LayoutInflater inflater;
     private ViewGroup container;
+    private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
 
     public NavigationDrawerFragment() {
     }
@@ -88,6 +106,20 @@ public class NavigationDrawerFragment extends Fragment {
 
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        spiceManagerBinary.start(this.getActivity());
+    }
+
+    @Override
+    public void onStop() {
+        spiceManagerBinary.shouldStop();
+        super.onStop();
     }
 
     @Override
@@ -116,6 +148,10 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         ((Button) header.findViewById(R.id.button)).setText(account.name);
+
+        UserRequest request3 = new UserRequest(account.name);
+
+        spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<UserMode>(this));
     }
 
     @Override
@@ -321,6 +357,43 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
+    }
+
+    @Override
+    public void onRequestFailure(SpiceException e) {
+        UserMode userMode = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("userMode", ""), UserMode.class);
+
+        if (userMode != null) fillUserInfos(userMode.getUser());
+    }
+
+    @Override
+    @DebugLog
+    public void onRequestSuccess(UserMode userMode) {
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("userMode", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(userMode));
+        fillUserInfos(userMode.getUser());
+    }
+
+    @DebugLog
+    private void fillUserInfos(User user) {
+        ImageView iv = ((ImageView) header.findViewById(R.id.imageAvatar));
+
+        File tempFile = new File(getActivity().getCacheDir(), "AVATAR_" + user.getId());
+        OkHttpBitmapRequest req = new OkHttpBitmapRequest(AVATAR_ROOT + user.getPicture(), iv.getWidth(),
+                iv.getHeight(), tempFile);
+
+        spiceManagerBinary.execute(req, tempFile.getName(), DurationInMillis.ALWAYS_EXPIRED, new RequestListener<Bitmap>() {
+            @Override
+            @DebugLog
+            public void onRequestFailure(SpiceException e) {
+            }
+
+            @Override
+            @DebugLog
+            public void onRequestSuccess(Bitmap bitmap) {
+                ((ImageView) header.findViewById(R.id.imageAvatar)).setImageBitmap(bitmap);
+
+            }
+        });
     }
 
     /**
