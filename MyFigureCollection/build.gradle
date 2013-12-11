@@ -25,23 +25,25 @@ android {
 }
 
 dependencies {
-    compile 'javax.annotation:javax.annotation-api:1.2-b03@jar'
-    compile 'commons-lang:commons-lang:2.6@jar'
+    compile 'javax.annotation:javax.annotation-api:1.2-b03'
+    compile 'commons-lang:commons-lang:2.6'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.google.http-client:google-http-client:1.17.0-rc@jar'
-    compile 'com.google.http-client:google-http-client-android:1.17.0-rc@jar'
-    compile ('com.google.http-client:google-http-client-gson:1.17.0-rc@jar')
+    compile 'com.google.http-client:google-http-client:1.17.0-rc'
+    compile 'com.google.http-client:google-http-client-android:1.17.0-rc'
+    compile ('com.google.http-client:google-http-client-gson:1.17.0-rc')
             {
                 exclude module: 'xpp3'
                 exclude module: 'stax-api'
             }
-    compile ('com.octo.android.robospice:robospice:1.4.9@jar')
+    compile ('com.octo.android.robospice:robospice:1.4.9')
             {
                 exclude module: 'support-v4'
             }
-    compile 'com.octo.android.robospice:robospice-google-http-client:1.4.6@jar'
-    compile 'com.octo.android.robospice:robospice-ui-spicelist:1.4.6@jar'
-    compile 'com.octo.android.robospice:robospice-cache:1.4.9@jar'
+    compile 'com.squareup.okhttp:okhttp:1.2.1'
+    compile 'com.octo.android.robospice:robospice-google-http-client:1.4.9'
+    compile 'com.octo.android.robospice:robospice-ui-spicelist:1.4.9'
+    compile 'com.octo.android.robospice:robospice-cache:1.4.9'
+    compile 'com.octo.android.robospice:robospice-okhttp:1.4.9'
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile 'com.android.support:support-v4:19.0.+'
 }

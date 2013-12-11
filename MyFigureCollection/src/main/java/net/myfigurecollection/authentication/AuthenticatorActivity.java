@@ -4,7 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +19,6 @@ import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.myfigurecollection.R;
 import net.myfigurecollection.api.request.ConnectionRequest;
-import net.myfigurecollection.api.request.listener.MFCRequestListener;
 
 
 /**
@@ -32,6 +31,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
     public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
     public final static String PARAM_USER_PASS = "USER_PASS";
+    public static final int REQ_SIGN_IN = 0;
     private final int REQ_SIGNUP = 1;
     private final String TAG = "MFC Authenticator";
     protected SpiceManager spiceManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
@@ -70,6 +70,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
                 /*Intent signup = new Intent(getBaseContext(), SignUpActivity.class);
                 signup.putExtras(getIntent().getExtras());
                 startActivityForResult(signup, REQ_SIGNUP);*/
+                String url = "https://secure.myfigurecollection.net/signs.php?mode=up";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
     }

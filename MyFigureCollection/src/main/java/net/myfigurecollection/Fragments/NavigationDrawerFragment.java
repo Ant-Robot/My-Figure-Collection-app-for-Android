@@ -1,16 +1,19 @@
 package net.myfigurecollection.Fragments;
 
-import android.support.v7.app.ActionBarActivity;;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,10 +22,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import net.myfigurecollection.R;
+import net.myfigurecollection.authentication.AccountGeneral;
+import net.myfigurecollection.authentication.AuthenticatorActivity;
+
+;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -35,30 +43,28 @@ public class NavigationDrawerFragment extends Fragment {
      * Remember the position of the selected item.
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
     private NavigationDrawerCallbacks mCallbacks;
-
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
     private ActionBarDrawerToggle mDrawerToggle;
-
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+    private View header;
+    private LayoutInflater inflater;
+    private ViewGroup container;
 
     public NavigationDrawerFragment() {
     }
@@ -85,10 +91,59 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        AccountManager am
+                = AccountManager.get(getActivity().getBaseContext());
+
+        Account[] accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        if (accounts.length > 0) {
+            refreshAccount(accounts[0]);
+        } else {
+            if (header != null)
+                mDrawerListView.removeHeaderView(header);
+            header = null;
+        }
+
+    }
+
+    private void refreshAccount(Account account) {
+        if (header == null) {
+            header = inflater.inflate(R.layout.header_navigation_drawer, container, false);
+            mDrawerListView.addHeaderView(header);
+        }
+
+        ((Button) header.findViewById(R.id.button)).setText(account.name);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
+
+        AccountManager am
+                = AccountManager.get(getActivity().getBaseContext());
+
+        Account[] accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+
+        this.container = container;
+        this.inflater = inflater;
+
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
+
+        if (accounts.length > 0) {
+            refreshAccount(accounts[0]);
+        } else {
+            Intent signin = new Intent(getActivity().getBaseContext(), AuthenticatorActivity.class);
+            Bundle b = savedInstanceState == null ? new Bundle() : savedInstanceState;
+            b.putString(AuthenticatorActivity.ARG_ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE);
+            b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+            signin.putExtras(b);
+            startActivityForResult(signin, AuthenticatorActivity.REQ_SIGN_IN);
+        }
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

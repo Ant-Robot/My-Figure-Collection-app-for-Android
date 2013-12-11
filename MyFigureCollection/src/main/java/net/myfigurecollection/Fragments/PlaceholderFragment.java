@@ -5,11 +5,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.octo.android.robospice.persistence.DurationInMillis;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
 import net.myfigurecollection.MainActivity;
 import net.myfigurecollection.R;
+import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.GalleryMode;
 import net.myfigurecollection.api.SearchMode;
@@ -25,7 +31,7 @@ import net.myfigurecollection.widgets.SpiceListFragment;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends SpiceListFragment {
+public class PlaceholderFragment extends SpiceListFragment implements RequestListener<CollectionMode> {
 
 
     /**
@@ -33,9 +39,23 @@ public class PlaceholderFragment extends SpiceListFragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
+    private View rootView;
 
 
     public PlaceholderFragment() {
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        spiceManagerBinary.start(this.getActivity());
+    }
+
+    @Override
+    public void onStop() {
+        spiceManagerBinary.shouldStop();
+        super.onStop();
     }
 
     /**
@@ -61,21 +81,24 @@ public class PlaceholderFragment extends SpiceListFragment {
         GalleryRequest request2 = new GalleryRequest("Climbatize", "0");
         UserRequest request3 = new UserRequest("Climbatize");
         ConnectionRequest request4 = new ConnectionRequest("Climbatize","160184");
-
         /*spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<CollectionMode>(this));
         spiceManager.execute(request1, request1.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<SearchMode>(this));
         spiceManager.execute(request2, request2.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<GalleryMode>(this));
         spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<UserMode>(this));
-       */
         spiceManager.execute(request4, request4.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<String>(this));
+    */
+
+        spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, this);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
        /* TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));*/
+
         return rootView;
     }
 
@@ -86,4 +109,14 @@ public class PlaceholderFragment extends SpiceListFragment {
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
+    @Override
+    public void onRequestFailure(SpiceException e) {
+        Toast.makeText(this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRequestSuccess(CollectionMode collectionMode) {
+        setListAdapter(new MFCListAdapter(getActivity(),spiceManagerBinary,collectionMode.getCollection().getWished().getItem()));
+
+    }
 }

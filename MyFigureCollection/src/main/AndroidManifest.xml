@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -30,6 +32,9 @@
 
         <service
             android:name="com.octo.android.robospice.GsonGoogleHttpClientSpiceService"
+            android:exported="false" />
+        <service
+            android:name="com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceService"
             android:exported="false" />
 
         <activity android:name=".authentication.AuthenticatorActivity" android:label="@string/login_label"/>
