@@ -4,18 +4,25 @@ package net.myfigurecollection.api;
 import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
 
-import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import javax.annotation.Generated;
 
 @Generated("com.googlecode.jsonschema2pojo")
 public class Collection {
 
-    @Key @Expose
+    @Key
+    @Expose
     private String link;
-    @Key @Expose
+    @Key
+    @Expose
     private Ordered ordered;
-    @Key @Expose
+    @Key
+    @Expose
     private Wished wished;
+    @Key
+    @Expose
+    private Owned owned;
 
     public String getLink() {
         return link;
@@ -39,6 +46,14 @@ public class Collection {
 
     public void setWished(Wished wished) {
         this.wished = wished;
+    }
+
+    public Owned getOwned() {
+        return owned;
+    }
+
+    public void setOwned(Owned owned) {
+        this.owned = owned;
     }
 
     @Override

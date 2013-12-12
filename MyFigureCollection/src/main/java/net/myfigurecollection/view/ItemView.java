@@ -1,9 +1,5 @@
 package net.myfigurecollection.view;
 
-/**
- * Created by Climbatize on 11/12/13.
- */
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;

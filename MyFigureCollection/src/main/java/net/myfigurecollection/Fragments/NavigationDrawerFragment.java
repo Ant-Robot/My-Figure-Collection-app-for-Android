@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,7 +32,7 @@ import com.google.gson.GsonBuilder;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
-import com.octo.android.robospice.request.okhttp.simple.OkHttpBitmapRequest;
+import com.octo.android.robospice.request.simple.SmallBinaryRequest;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
 import net.myfigurecollection.R;
@@ -44,6 +45,7 @@ import net.myfigurecollection.authentication.AuthenticatorActivity;
 import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.io.File;
+import java.io.InputStream;
 
 import hugo.weaving.DebugLog;
 
@@ -84,6 +86,7 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
     private ViewGroup container;
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
 
+
     public NavigationDrawerFragment() {
     }
 
@@ -102,7 +105,7 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        //selectItem(mCurrentSelectedPosition);
 
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
@@ -130,7 +133,10 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
         AccountManager am
                 = AccountManager.get(getActivity().getBaseContext());
 
-        Account[] accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        Account[] accounts = new Account[0];
+        if (am != null) {
+            accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        }
         if (accounts.length > 0) {
             refreshAccount(accounts[0]);
         } else {
@@ -145,13 +151,26 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
         if (header == null) {
             header = inflater.inflate(R.layout.header_navigation_drawer, container, false);
             mDrawerListView.addHeaderView(header);
+
+            mDrawerListView.setAdapter(new ArrayAdapter<String>(
+                    getActionBar().getThemedContext(),
+                    android.R.layout.simple_list_item_1,
+                    android.R.id.text1,
+                    new String[]{
+                            getString(R.string.title_section1),
+                            getString(R.string.title_section2),
+                            getString(R.string.title_section3),
+                    }));
+            //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         }
+
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("user", account.name).commit();
 
         ((Button) header.findViewById(R.id.button)).setText(account.name);
 
-        UserRequest request3 = new UserRequest(account.name);
 
-        spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<UserMode>(this));
+        UserRequest request3 = new UserRequest(account.name);
+        spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, this);
     }
 
     @Override
@@ -161,7 +180,11 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
         AccountManager am
                 = AccountManager.get(getActivity().getBaseContext());
 
-        Account[] accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        Account[] accounts = new Account[0];
+
+        if (am != null) {
+            accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        }
 
         this.container = container;
         this.inflater = inflater;
@@ -186,16 +209,7 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
         return mDrawerListView;
     }
 
@@ -369,31 +383,33 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
     @Override
     @DebugLog
     public void onRequestSuccess(UserMode userMode) {
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("userMode", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(userMode));
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString("userMode", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(userMode)).commit();
         fillUserInfos(userMode.getUser());
     }
 
     @DebugLog
-    private void fillUserInfos(User user) {
-        ImageView iv = ((ImageView) header.findViewById(R.id.imageAvatar));
+    private boolean fillUserInfos(User user) {
+        SmallBinaryRequest req = new SmallBinaryRequest(AVATAR_ROOT + user.getPicture());
 
-        File tempFile = new File(getActivity().getCacheDir(), "AVATAR_" + user.getId());
-        OkHttpBitmapRequest req = new OkHttpBitmapRequest(AVATAR_ROOT + user.getPicture(), iv.getWidth(),
-                iv.getHeight(), tempFile);
-
-        spiceManagerBinary.execute(req, tempFile.getName(), DurationInMillis.ALWAYS_EXPIRED, new RequestListener<Bitmap>() {
+        spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ALWAYS_EXPIRED, new RequestListener<InputStream>() {
             @Override
-            @DebugLog
             public void onRequestFailure(SpiceException e) {
+                Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
             @Override
-            @DebugLog
-            public void onRequestSuccess(Bitmap bitmap) {
+            public void onRequestSuccess(InputStream file) {
+                Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Request ok", Toast.LENGTH_LONG).show();
+                Bitmap bitmap = null;
+
+                bitmap = BitmapFactory.decodeStream(file);
+
                 ((ImageView) header.findViewById(R.id.imageAvatar)).setImageBitmap(bitmap);
 
             }
         });
+
+        return false;
     }
 
     /**

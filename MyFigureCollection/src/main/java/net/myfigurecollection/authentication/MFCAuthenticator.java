@@ -82,57 +82,56 @@ public class MFCAuthenticator extends AbstractAccountAuthenticator {
         // the server for an appropriate AuthToken.
         final AccountManager am = AccountManager.get(mContext);
 
-        String authToken = null;
 
-
-        Log.d("climbatize", TAG + "> peekAuthToken returned - " + authToken);
 
         // Lets give another try to authenticate the user
-        if (TextUtils.isEmpty(authToken)) {
-            final String password = am.getPassword(account);
-            if (password != null) {
-                try {
-                    Log.d("climbatize", TAG + "> re-authenticating with the existing password");
+        String authToken = null;
+        String password = null;
+
+        if (am != null) {
+            password = am.getPassword(account);
+        }
+        if (password != null) {
+            try {
+                Log.d("climbatize", TAG + "> re-authenticating with the existing password");
 
 
-                    HttpRequest request = null;
-                    HttpTransport transport = new ApacheHttpTransport();
-                    HttpRequestFactory requestFactory = transport.createRequestFactory();
-                    GenericUrl gUrl = new GenericUrl(ConnectionRequest.URL);
+                HttpTransport transport = new ApacheHttpTransport();
+                HttpRequestFactory requestFactory = transport.createRequestFactory();
+                GenericUrl gUrl = new GenericUrl(ConnectionRequest.URL);
 
 
-                    Map<String, String> params = new TreeMap<String, String>();
-                    params.put("username", account.name);
-                    params.put("password", password);
-                    params.put("set_cookie", "1");
-                    params.put("commit", "signin");
-                    params.put("location", "http://myfigurecollection.net/");
+                Map<String, String> params = new TreeMap<String, String>();
+                params.put("username", account.name);
+                params.put("password", password);
+                params.put("set_cookie", "1");
+                params.put("commit", "signin");
+                params.put("location", "http://myfigurecollection.net/");
 
-                    UrlEncodedContent content = new UrlEncodedContent(params);
-
-
-                    request = requestFactory.buildPostRequest(gUrl, content);
+                UrlEncodedContent content = new UrlEncodedContent(params);
 
 
-                    final String[] res = {null};
+                HttpRequest request = requestFactory.buildPostRequest(gUrl, content);
 
-                    //Paradoxically MFC return a 302 found status to the connection request success
-                    request.setUnsuccessfulResponseHandler(new HttpUnsuccessfulResponseHandler() {
-                        @Override
-                        public boolean handleResponse(HttpRequest httpRequest, HttpResponse httpResponse, boolean b) throws IOException {
 
-                            res[0] = httpResponse.getHeaders().get("Set-Cookie").toString();
+                final String[] res = {null};
 
-                            return false;
-                        }
-                    });
+                //Paradoxically MFC return a 302 found status to the connection request success
+                request.setUnsuccessfulResponseHandler(new HttpUnsuccessfulResponseHandler() {
+                    @Override
+                    public boolean handleResponse(HttpRequest httpRequest, HttpResponse httpResponse, boolean b) throws IOException {
 
-                    HttpResponse response2 = request.execute();
+                        res[0] = httpResponse.getHeaders().get("Set-Cookie").toString();
 
-                    authToken = res[0];
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                        return false;
+                    }
+                });
+
+                request.execute();
+
+                authToken = res[0];
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

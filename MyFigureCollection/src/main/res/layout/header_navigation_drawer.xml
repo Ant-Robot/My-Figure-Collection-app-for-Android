@@ -10,11 +10,15 @@
         android:id="@+id/imageAvatar"
         android:background="@android:drawable/picture_frame"
         android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="false" />
+        android:adjustViewBounds="false"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:minWidth="200dp"
+        android:background="#0000"
+        android:textStyle="bold" />
 </LinearLayout>

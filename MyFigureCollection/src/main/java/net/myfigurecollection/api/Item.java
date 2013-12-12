@@ -8,7 +8,7 @@ import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("com.googlecode.jsonschema2pojo")
-public class Item {
+public class Item implements Comparable<Item>{
 
     @Key @Expose
     private Root root;
@@ -56,4 +56,8 @@ public class Item {
         return ToStringBuilder.reflectionToString(this);
     }
 
+    @Override
+    public int compareTo(Item another) {
+        return this.getData().getName().compareTo(another.getData().getName());
+    }
 }

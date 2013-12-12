@@ -3,22 +3,17 @@ package net.myfigurecollection.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpiceRequest;
 import com.octo.android.robospice.request.okhttp.simple.OkHttpBitmapRequest;
 import com.octo.android.robospice.spicelist.SpiceListItemView;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpSpiceArrayAdapter;
 
 import net.myfigurecollection.api.Item;
-import net.myfigurecollection.api.Wished;
 import net.myfigurecollection.view.ItemView;
 
 import java.io.File;
 import java.util.List;
 
-/**
- * Created by Climbatize on 11/12/13.
- */
 public class MFCListAdapter extends OkHttpSpiceArrayAdapter<Item> {
 
     // --------------------------------------------------------------------------------------------

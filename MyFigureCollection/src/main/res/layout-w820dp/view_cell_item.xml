@@ -6,7 +6,7 @@
     tools:context=".MainActivity">
 
     <View
-        android:layout_width="10dp"
+        android:layout_width="15dp"
         android:layout_height="match_parent"
         android:id="@+id/view_category"
         android:background="#000"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/octo_thumbnail_imageview"
         android:layout_alignParentTop="true"
-        android:textSize="10sp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/item_name_textview"
         android:layout_alignParentBottom="true"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="italic" />
 
 
