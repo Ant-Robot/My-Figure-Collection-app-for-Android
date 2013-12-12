@@ -12,5 +12,10 @@
 
     <string name="signup_title">Create new account</string>
     <string name="login_label">Log in</string>
+    <string name="account_login">Login</string>
+    <string name="account_password">Password</string>
+    <string name="account_signin">Sign in</string>
+    <string name="account_new">New user?</string>
+    <string name="main_choose">☚ Choose a category here</string>
 
 </resources>

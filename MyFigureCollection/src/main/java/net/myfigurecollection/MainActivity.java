@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
 
+import net.myfigurecollection.Fragments.CollectionFragment;
 import net.myfigurecollection.Fragments.NavigationDrawerFragment;
-import net.myfigurecollection.Fragments.PlaceholderFragment;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position-1))
+                .replace(R.id.container, CollectionFragment.newInstance(position - 1))
                 .commit();
     }
 

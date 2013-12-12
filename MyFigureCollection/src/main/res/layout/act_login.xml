@@ -11,8 +11,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="20dp"
-              android:hint="Email address"
-              android:inputType="textEmailAddress"
+              android:hint="@string/account_login"
+              android:inputType="textPersonName"
               android:padding="10dp"
             />
 
@@ -21,7 +21,7 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="10dp"
               android:inputType="textPassword"
-              android:hint="Password"
+              android:hint="@string/account_password"
               android:padding="10dp"
             />
 
@@ -29,14 +29,14 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="10dp"
-              android:text="Sign in"
+              android:text="@string/account_signin"
               android:padding="10dp"/>
 
     <TextView android:id="@+id/signUp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center"
-              android:text="New user?"
+              android:text="@string/account_new"
               android:padding="10dp"/>
 
 </LinearLayout>

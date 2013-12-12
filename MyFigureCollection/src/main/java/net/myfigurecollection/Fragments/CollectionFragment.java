@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends SpiceListFragment implements RequestListener<CollectionMode> {
+public class CollectionFragment extends SpiceListFragment implements RequestListener<CollectionMode> {
 
 
     /**
@@ -43,15 +43,15 @@ public class PlaceholderFragment extends SpiceListFragment implements RequestLis
     private int currentPage = 1;
 
 
-    public PlaceholderFragment() {
+    public CollectionFragment() {
     }
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static PlaceholderFragment newInstance(int sectionNumber) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
+    public static CollectionFragment newInstance(int sectionNumber) {
+        CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -84,29 +84,14 @@ public class PlaceholderFragment extends SpiceListFragment implements RequestLis
         } else {
             currentPage = 1;
             getCollection();
-
-
         }
-
-        /*SearchRequest request1 = new SearchRequest("Saber");
-        GalleryRequest request2 = new GalleryRequest("Climbatize", "0");
-        UserRequest request3 = new UserRequest("Climbatize");
-        ConnectionRequest request4 = new ConnectionRequest("Climbatize","160184");
-        spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<CollectionMode>(this));
-        spiceManager.execute(request1, request1.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<SearchMode>(this));
-        spiceManager.execute(request2, request2.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<GalleryMode>(this));
-        spiceManager.execute(request3, request3.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<UserMode>(this));
-        spiceManager.execute(request4, request4.createCacheKey(), DurationInMillis.ALWAYS_EXPIRED, new MFCRequestListener<String>(this));
-    */
-
-
     }
 
     private void getCollection() {
         String user = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("user", null);
 
         if (user != null) {
-            PlaceholderFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
+            CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
 
 
             CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", "0");
@@ -128,9 +113,6 @@ public class PlaceholderFragment extends SpiceListFragment implements RequestLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       /* TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));*/
-
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
@@ -184,10 +166,9 @@ public class PlaceholderFragment extends SpiceListFragment implements RequestLis
             currentPage++;
             getCollection();
 
-        } else
-        {
+        } else {
             Collections.sort(items);
-            PlaceholderFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+            CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
             setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
         }
 
