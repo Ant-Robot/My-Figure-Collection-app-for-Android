@@ -15,8 +15,9 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
-import net.myfigurecollection.MainActivity;
+import net.myfigurecollection.activity.MainActivity;
 import net.myfigurecollection.R;
+import net.myfigurecollection.adapter.CollectionPagerAdapter;
 import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
@@ -38,6 +39,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String ARG_ROOT_NUMBER = "root_number";
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
@@ -50,11 +52,13 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CollectionFragment newInstance(int sectionNumber) {
+    public static CollectionFragment newInstance(int sectionNumber, int root) {
         CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putInt(ARG_ROOT_NUMBER, root);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -94,7 +98,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
 
 
-            CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", "0");
+            CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", getArguments().getInt(ARG_ROOT_NUMBER)+"");
             spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
         }
     }
