@@ -4,19 +4,29 @@ package net.myfigurecollection.api;
 import com.google.api.client.util.Key;
 import com.google.gson.annotations.Expose;
 
-import javax.annotation.Generated;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-@Generated("com.googlecode.jsonschema2pojo")
-public class Item implements Comparable<Item>{
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-    @Key @Expose
+import javax.annotation.Generated;
+
+@Generated("com.googlecode.jsonschema2pojo")
+public class Item implements Comparable<Item> {
+
+    @Key
+    @Expose
     private Root root;
-    @Key @Expose
+    @Key
+    @Expose
     private Category category;
-    @Key @Expose
+    @Key
+    @Expose
     private Data data;
-    @Key @Expose
+    @Key
+    @Expose
     private Mycollection mycollection;
 
     public Root getRoot() {
@@ -49,6 +59,50 @@ public class Item implements Comparable<Item>{
 
     public void setMycollection(Mycollection mycollection) {
         this.mycollection = mycollection;
+    }
+
+    public String getName() {
+        final int manuStart = getData().getName().lastIndexOf("(", getData().getName().length() - 1);
+
+        return (getData().getName().substring(0, manuStart));
+    }
+
+    public Date getDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date d = null;
+        try {
+            d = sdf.parse(getData().getRelease_date());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+
+    }
+
+    public String getCopyright() {
+                SimpleDateFormat sdfout = new SimpleDateFormat("yyyy", Locale.getDefault());
+
+        String date = "";
+        Date d = getDate();
+
+        if (d != null)
+            date = sdfout.format(d);
+
+
+        StringBuilder sb = new StringBuilder("©");
+
+        sb.append(date).append(d != null ? " " : "").append(getManufacturer());
+
+        if (Integer.parseInt(getData().getPrice()) > 0) sb.append(" - ")
+                .append(getData().getPrice()).append(" ¥");
+
+        return sb.toString();
+    }
+
+    public String getManufacturer()
+    {
+        final int manuStart = getData().getName().lastIndexOf("(", getData().getName().length() - 1);
+        return getData().getName().substring(manuStart + 1, getData().getName().length() - 1);
     }
 
     @Override

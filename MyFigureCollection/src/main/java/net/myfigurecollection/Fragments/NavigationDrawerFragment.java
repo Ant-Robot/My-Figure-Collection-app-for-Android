@@ -350,11 +350,11 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
             return true;
         }
 
-        if (item.getItemId() == R.id.action_example) {
+        /*if (item.getItemId() == R.id.action_example) {
             Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
             return true;
         }
-
+*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -391,7 +391,7 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
     private boolean fillUserInfos(User user) {
         SmallBinaryRequest req = new SmallBinaryRequest(AVATAR_ROOT + user.getPicture());
 
-        spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ALWAYS_EXPIRED, new RequestListener<InputStream>() {
+        spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ONE_DAY, new RequestListener<InputStream>() {
             @Override
             public void onRequestFailure(SpiceException e) {
                 Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -399,7 +399,6 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
 
             @Override
             public void onRequestSuccess(InputStream file) {
-                Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Request ok", Toast.LENGTH_LONG).show();
                 Bitmap bitmap = null;
 
                 bitmap = BitmapFactory.decodeStream(file);

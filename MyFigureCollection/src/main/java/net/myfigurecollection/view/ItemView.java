@@ -13,6 +13,11 @@ import com.octo.android.robospice.spicelist.SpiceListItemView;
 import net.myfigurecollection.R;
 import net.myfigurecollection.api.Item;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ItemView extends RelativeLayout implements SpiceListItemView<Item> {
 
     private TextView itemNameTextView;
@@ -37,8 +42,8 @@ public class ItemView extends RelativeLayout implements SpiceListItemView<Item> 
     @Override
     public void update(Item item) {
         this.item = item;
-        itemNameTextView.setText(item.getData().getName());
-        itemContentTextView.setText(String.valueOf(item.getData().getPrice()));
+        itemNameTextView.setText(item.getName());
+        itemContentTextView.setText(item.getCopyright());
         colorView.setBackgroundColor(Color.parseColor(item.getCategory().getColor()));
     }
 
