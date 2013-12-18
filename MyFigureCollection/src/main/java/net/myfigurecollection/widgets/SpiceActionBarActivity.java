@@ -13,13 +13,13 @@ public class SpiceActionBarActivity extends ActionBarActivity {
     protected SpiceManager spiceManager = new SpiceManager(GsonGoogleHttpClientSpiceService.class);
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         spiceManager.start(this);
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         spiceManager.shouldStop();
         super.onStop();
     }

@@ -1,27 +1,29 @@
-package net.myfigurecollection;
+package net.myfigurecollection.activity;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.FragmentManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
 
-import net.myfigurecollection.Fragments.CollectionFragment;
-import net.myfigurecollection.Fragments.NavigationDrawerFragment;
+import net.myfigurecollection.R;
+import net.myfigurecollection.activity.fragment.CollectionFragment;
+import net.myfigurecollection.activity.fragment.GalleryFragment;
+import net.myfigurecollection.activity.fragment.NavigationDrawerFragment;
+import net.myfigurecollection.widgets.SpiceActionBarActivity;
 
-public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends SpiceActionBarActivity
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
-
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -42,7 +44,22 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        String user = PreferenceManager.getDefaultSharedPreferences(this).getString("user", null);
 
+        if (user != null) {
+            getGallery(user);
+        }
+
+
+    }
+
+    private void getGallery(String user) {
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, GalleryFragment.newInstance(user))
+                .commit();
     }
 
     @Override
@@ -52,7 +69,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     protected void onStart() {
-
         super.onStart();
     }
 
@@ -72,13 +88,13 @@ public class MainActivity extends ActionBarActivity
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
+            case 0:
                 mTitle = getString(R.string.title_section1);
                 break;
-            case 2:
+            case 1:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case 3:
+            case 2:
                 mTitle = getString(R.string.title_section3);
                 break;
         }
@@ -90,7 +106,6 @@ public class MainActivity extends ActionBarActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,5 +129,8 @@ public class MainActivity extends ActionBarActivity
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
+    }
 }

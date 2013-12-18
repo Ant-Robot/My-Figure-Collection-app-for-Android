@@ -1,4 +1,4 @@
-package net.myfigurecollection.Fragments;
+package net.myfigurecollection.activity.fragment;
 
 import net.myfigurecollection.widgets.SpiceFragment;
 

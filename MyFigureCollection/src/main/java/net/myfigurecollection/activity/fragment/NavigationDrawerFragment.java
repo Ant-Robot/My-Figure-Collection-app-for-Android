@@ -1,4 +1,4 @@
-package net.myfigurecollection.Fragments;
+package net.myfigurecollection.activity.fragment;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -39,12 +39,10 @@ import net.myfigurecollection.R;
 import net.myfigurecollection.api.User;
 import net.myfigurecollection.api.UserMode;
 import net.myfigurecollection.api.request.UserRequest;
-import net.myfigurecollection.api.request.listener.MFCRequestListener;
 import net.myfigurecollection.authentication.AccountGeneral;
 import net.myfigurecollection.authentication.AuthenticatorActivity;
 import net.myfigurecollection.widgets.SpiceFragment;
 
-import java.io.File;
 import java.io.InputStream;
 
 import hugo.weaving.DebugLog;
@@ -399,7 +397,7 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
 
             @Override
             public void onRequestSuccess(InputStream file) {
-                Bitmap bitmap = null;
+                Bitmap bitmap;
 
                 bitmap = BitmapFactory.decodeStream(file);
 

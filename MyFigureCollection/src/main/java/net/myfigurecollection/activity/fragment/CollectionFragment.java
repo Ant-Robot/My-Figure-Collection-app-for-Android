@@ -1,11 +1,13 @@
-package net.myfigurecollection.Fragments;
+package net.myfigurecollection.activity.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
@@ -15,12 +17,15 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
-import net.myfigurecollection.MainActivity;
 import net.myfigurecollection.R;
+import net.myfigurecollection.activity.ItemActivity;
+import net.myfigurecollection.activity.MainActivity;
 import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
 import net.myfigurecollection.api.request.CollectionRequest;
+import net.myfigurecollection.authentication.AccountGeneral;
+import net.myfigurecollection.authentication.AuthenticatorActivity;
 import net.myfigurecollection.widgets.SpiceListFragment;
 
 import java.lang.reflect.Type;
@@ -172,5 +177,16 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
             setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
         }
 
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent itemView = new Intent(getActivity().getBaseContext(), ItemActivity.class);
+        /*Bundle b = new Bundle();
+        b.putString(AuthenticatorActivity.ARG_ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE);
+        b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+        signin.putExtras(b);*/
+        startActivity(itemView);
     }
 }
