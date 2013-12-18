@@ -17,5 +17,8 @@
     <string name="account_signin">Sign in</string>
     <string name="account_new">New user?</string>
     <string name="main_choose">☚ Choose a category here</string>
+    <string name="cat_figures">Figures</string>
+    <string name="cat_goods">Goods</string>
+    <string name="cat_media">Media</string>
 
 </resources>

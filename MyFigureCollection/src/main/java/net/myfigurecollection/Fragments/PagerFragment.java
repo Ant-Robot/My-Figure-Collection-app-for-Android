@@ -21,7 +21,7 @@ import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
 import net.myfigurecollection.api.request.CollectionRequest;
-import net.myfigurecollection.widgets.SpiceListFragment;
+import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CollectionFragment extends SpiceListFragment implements RequestListener<CollectionMode> {
+public class PagerFragment extends SpiceFragment implements RequestListener<CollectionMode> {
 
 
     /**
@@ -38,65 +38,42 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String ARG_ROOT_NUMBER = "root_number";
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
 
 
-    public CollectionFragment() {
+    public PagerFragment() {
     }
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CollectionFragment newInstance(int sectionNumber, int root) {
-        CollectionFragment fragment = new CollectionFragment();
+    public static PagerFragment newInstance(int sectionNumber) {
+        PagerFragment fragment = new PagerFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putInt(ARG_ROOT_NUMBER, root);
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        spiceManagerBinary.start(this.getActivity());
-    }
 
-    @Override
-    public void onStop() {
-        spiceManagerBinary.shouldStop();
-        super.onStop();
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String stringitems = null;
-        if (savedInstanceState != null) stringitems = savedInstanceState.getString("items");
-        if (stringitems != null && !stringitems.equalsIgnoreCase("null")) {
-            Type type = new TypeToken<List<Item>>() {
-            }.getType();
-            items = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(stringitems, type);
-            setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
-        } else {
-            currentPage = 1;
-            getCollection();
-        }
     }
 
     private void getCollection() {
         String user = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("user", null);
 
         if (user != null) {
-            CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
+            PagerFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
 
 
-            CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", getArguments().getInt(ARG_ROOT_NUMBER)+"");
+            CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", "0");
             spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
         }
     }
@@ -170,7 +147,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
 
         } else {
             Collections.sort(items);
-            CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+            PagerFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
             setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
         }
 
