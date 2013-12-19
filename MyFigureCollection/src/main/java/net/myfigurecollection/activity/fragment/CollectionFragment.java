@@ -183,10 +183,11 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Intent itemView = new Intent(getActivity().getBaseContext(), ItemActivity.class);
-        /*Bundle b = new Bundle();
-        b.putString(AuthenticatorActivity.ARG_ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE);
-        b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
-        signin.putExtras(b);*/
+        Bundle b = new Bundle();
+        b.putString("item", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(items.get(position)));
+        /*b.putString(AuthenticatorActivity.ARG_ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE);
+        b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);*/
+        itemView.putExtras(b);
         startActivity(itemView);
     }
 }

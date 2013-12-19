@@ -46,9 +46,9 @@ public class MainActivity extends SpiceActionBarActivity
 
         String user = PreferenceManager.getDefaultSharedPreferences(this).getString("user", null);
 
-        if (user != null) {
+        /*if (user != null && onSectionAttached(0).) {
             getGallery(user);
-        }
+        }*/
 
 
     }

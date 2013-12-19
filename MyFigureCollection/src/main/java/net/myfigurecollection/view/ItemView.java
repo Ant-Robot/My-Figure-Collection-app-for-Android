@@ -2,6 +2,7 @@ package net.myfigurecollection.view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,6 +31,12 @@ public class ItemView extends RelativeLayout implements SpiceListItemView<Item> 
         super(context);
         inflateView(context);
     }
+
+    public ItemView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        inflateView(context);
+    }
+
 
     private void inflateView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_cell_item, this);

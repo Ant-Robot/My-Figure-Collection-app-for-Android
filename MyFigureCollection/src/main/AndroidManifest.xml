@@ -53,7 +53,12 @@
 
         <activity
             android:name="net.myfigurecollection.activity.ItemActivity"
+            android:parentActivityName="net.myfigurecollection.activity.MainActivity"
             android:label="@string/title_activity_item" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.myfigurecollection.activity.ItemActivity" />
+
         </activity>
     </application>
 
