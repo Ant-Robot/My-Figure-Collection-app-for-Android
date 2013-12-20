@@ -27,9 +27,9 @@ public class MFCGalleryAdapter extends OkHttpSpiceArrayAdapter<Picture> {
     }
 
     @Override
-    public OkHttpBitmapRequest createRequest(Picture gitHubUser, int imageIndex, int requestImageWidth, int requestImageHeight) {
-        File tempFile = new File(getContext().getCacheDir(), "THUMB_IMAGE_TEMP_" + gitHubUser.getId());
-        return new OkHttpBitmapRequest(gitHubUser.getSrc(), requestImageWidth,
+    public OkHttpBitmapRequest createRequest(Picture picture, int imageIndex, int requestImageWidth, int requestImageHeight) {
+        File tempFile = new File(getContext().getCacheDir(), "THUMB_IMAGE_TEMP_" + picture.getId());
+        return new OkHttpBitmapRequest(picture.getSrc(), requestImageWidth,
                 requestImageHeight, tempFile);
     }
 
