@@ -19,5 +19,6 @@
     <string name="account_new">New user?</string>
     <string name="main_choose">☚ Choose a category here</string>
     <string name="title_activity_item">Item details</string>
+    <string name="description_zoom_touch_close">Expanded image (touch to close)</string>
 
 </resources>

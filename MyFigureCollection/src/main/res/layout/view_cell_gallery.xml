@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.GalleryView">
+    tools:context=".view.GalleryView"
+    android:clickable="false">
 
 
 
@@ -14,7 +15,8 @@
         android:scaleType="centerCrop"
         android:contentDescription=""
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:clickable="false" />
 
 
 
