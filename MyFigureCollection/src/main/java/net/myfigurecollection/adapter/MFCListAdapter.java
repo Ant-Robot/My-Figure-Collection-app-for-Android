@@ -25,9 +25,9 @@ public class MFCListAdapter extends OkHttpSpiceArrayAdapter<Item> {
     }
 
     @Override
-    public OkHttpBitmapRequest createRequest(Item gitHubUser, int imageIndex, int requestImageWidth, int requestImageHeight) {
-        File tempFile = new File(getContext().getCacheDir(), "THUMB_IMAGE_TEMP_" + gitHubUser.getData().getId());
-        return new OkHttpBitmapRequest("http://myfigurecollection.net/pics/figure/" + gitHubUser.getData().getId()+".jpg", requestImageWidth,
+    public OkHttpBitmapRequest createRequest(Item item, int imageIndex, int requestImageWidth, int requestImageHeight) {
+        File tempFile = new File(getContext().getCacheDir(), "THUMB_IMAGE_TEMP_" + item.getData().getId());
+        return new OkHttpBitmapRequest("http://myfigurecollection.net/pics/figure/" + item.getData().getId()+".jpg", requestImageWidth,
                 requestImageHeight, tempFile);
     }
 
