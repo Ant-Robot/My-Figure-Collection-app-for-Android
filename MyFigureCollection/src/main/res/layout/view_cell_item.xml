@@ -36,7 +36,8 @@
         android:layout_toRightOf="@id/octo_thumbnail_imageview"
         android:layout_alignParentTop="true"
         android:textSize="10sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginTop="2dp" />
 
     <TextView
         android:id="@+id/item_content_textview"

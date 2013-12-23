@@ -9,7 +9,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
-
     <string name="signup_title">Create new account</string>
     <string name="login_label">Log in</string>
     <string name="account_login">Login</string>
@@ -20,5 +19,6 @@
     <string name="cat_figures">Figures</string>
     <string name="cat_goods">Goods</string>
     <string name="cat_media">Media</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

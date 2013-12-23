@@ -15,8 +15,9 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
-import net.myfigurecollection.MainActivity;
+import net.myfigurecollection.activity.MainActivity;
 import net.myfigurecollection.R;
+import net.myfigurecollection.adapter.CollectionPagerAdapter;
 import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
@@ -57,6 +58,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putInt(ARG_ROOT_NUMBER, root);
         fragment.setArguments(args);
+
         return fragment;
     }
 

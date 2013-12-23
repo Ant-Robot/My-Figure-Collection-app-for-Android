@@ -3,7 +3,9 @@ package net.myfigurecollection.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 
 import net.myfigurecollection.Fragments.CollectionFragment;
 import net.myfigurecollection.R;
@@ -23,9 +25,9 @@ public class CollectionPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int root) {
+    public Fragment getItem(int i) {
 
-        return CollectionFragment.newInstance(status,root);
+        return CollectionFragment.newInstance(status,i);
     }
 
 
