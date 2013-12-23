@@ -28,6 +28,17 @@ public class Item implements Comparable<Item> {
     @Key
     @Expose
     private Mycollection mycollection;
+    @Key
+    @Expose
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Root getRoot() {
         return root;

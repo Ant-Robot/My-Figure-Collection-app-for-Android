@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -33,7 +32,6 @@ import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 import net.myfigurecollection.R;
 import net.myfigurecollection.adapter.MFCGalleryAdapter;
 import net.myfigurecollection.api.GalleryMode;
-import net.myfigurecollection.api.Item;
 import net.myfigurecollection.api.Picture;
 import net.myfigurecollection.api.request.GalleryRequest;
 import net.myfigurecollection.widgets.SpiceFragment;
@@ -60,11 +58,12 @@ public class GalleryFragment extends SpiceFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "current gallery";
+    private static final String ARG_PARAM2 = "type gallery";
     private Animator mCurrentAnimator;
     private int mShortAnimationDuration;
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private OnFragmentInteractionListener mListener;
+    private boolean mParam2;
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Picture> items;
     private int currentPage;
@@ -89,17 +88,28 @@ public class GalleryFragment extends SpiceFragment {
         return fragment;
     }
 
+    public static GalleryFragment newInstance(String param1, boolean param2) {
+        GalleryFragment fragment = new GalleryFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putBoolean(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getBoolean(ARG_PARAM2, false);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(ARG_PARAM1, mParam1);
+        outState.putBoolean(ARG_PARAM2, mParam2);
         outState.putString("items", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(items));
         super.onSaveInstanceState(outState);
     }
@@ -111,12 +121,7 @@ public class GalleryFragment extends SpiceFragment {
         return inflater.inflate(R.layout.fragment_gallery, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onStart() {
@@ -161,8 +166,8 @@ public class GalleryFragment extends SpiceFragment {
 
                 getActivity().setProgressBarIndeterminateVisibility(true);
 
-                File tempFile = new File(getActivity().getCacheDir(), "IMAGE_TEMP_" + pic.getId());
-                if (tempFile.exists()) {
+                File tempFile = new File(getActivity().getExternalCacheDir(), getActivity().getString(R.string.mfc_cache_pic_gallery,pic.getId()));
+                if (tempFile.length()>0) {
                     Bitmap bitmap;
 
 
@@ -178,7 +183,7 @@ public class GalleryFragment extends SpiceFragment {
 
                         @Override
                         public void onRequestSuccess(InputStream file) {
-                            File tempFile = new File(getActivity().getCacheDir(), "IMAGE_TEMP_" + pic.getId());
+                            File tempFile = new File(getActivity().getExternalCacheDir(), getActivity().getString(R.string.mfc_cache_pic_gallery,pic.getId()));
 
                             OutputStream out = null;
                             try {
@@ -217,12 +222,17 @@ public class GalleryFragment extends SpiceFragment {
 
     private void getGallery(final GridView view) {
         String user = mParam1;
+        Boolean isItem = mParam2;
 
         if (user != null) {
             GalleryFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
 
 
-            GalleryRequest request = new GalleryRequest(user, currentPage + "");
+            GalleryRequest request;
+
+            if (!isItem)request = new GalleryRequest(user, currentPage + "");
+            else request = new GalleryRequest(Integer.parseInt(user),currentPage+"");
+
             spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, new RequestListener<GalleryMode>() {
                 @Override
                 public void onRequestFailure(SpiceException e) {
@@ -457,22 +467,6 @@ public class GalleryFragment extends SpiceFragment {
         });
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
      * This interface must be implemented by activities that contain this

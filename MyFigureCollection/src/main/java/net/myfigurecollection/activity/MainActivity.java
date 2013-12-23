@@ -1,8 +1,15 @@
 package net.myfigurecollection.activity;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,11 +22,21 @@ import net.myfigurecollection.R;
 import net.myfigurecollection.activity.fragment.CollectionFragment;
 import net.myfigurecollection.activity.fragment.GalleryFragment;
 import net.myfigurecollection.activity.fragment.NavigationDrawerFragment;
+import net.myfigurecollection.authentication.AccountGeneral;
 import net.myfigurecollection.widgets.SpiceActionBarActivity;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends SpiceActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener {
 
+    final MainActivity cbt = this;
+    private final Handler handler = new Handler();
+    AccountManagerFuture<Bundle> amf;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -46,10 +63,107 @@ public class MainActivity extends SpiceActionBarActivity
 
         String user = PreferenceManager.getDefaultSharedPreferences(this).getString("user", null);
 
-        if (user != null && getSupportFragmentManager().getFragments().size()<=1) {
+        if (user != null && getSupportFragmentManager().getFragments().size() <= 1) {
             getGallery(user);
         }
 
+
+
+        checkCookie();
+
+
+    }
+
+    private void getCookie(AccountManager am) {
+
+
+        Account[] accounts = new Account[0];
+
+
+        if (am != null) {
+            accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
+        }
+        if (accounts.length > 0) {
+            amf = am.getAuthToken(accounts[0], AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY, true, new AccountManagerCallback<Bundle>() {
+                @Override
+                public void run(AccountManagerFuture<Bundle> future) {
+                    try {
+                        Bundle result;
+                        Intent i;
+
+                        result = future.getResult();
+                        if (result.containsKey(AccountManager.KEY_INTENT)) {
+                            i = (Intent) result.get(AccountManager.KEY_INTENT);
+                            if (i.toString().contains("GrantCredentialsPermissionActivity")) {
+                                // Will have to wait for the user to accept
+                                // the request therefore this will have to
+                                // run in a foreground application
+                                cbt.startActivity(i);
+                            } else {
+                                cbt.startActivity(i);
+                            }
+
+                        } else {
+                            String token = (String) result.get(AccountManager.KEY_AUTHTOKEN);
+                            if (token != null)
+                                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().putString("cookie", token).commit();
+
+                                /*
+                                 * work with token
+                                 */
+
+                            // Remember to invalidate the token if the web service rejects it
+                            // if(response.isTokenInvalid()){
+                            //    accMgr.invalidateAuthToken(authTokenType, token);
+                            // }
+                            //am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, token);
+
+                        }
+                    } catch (OperationCanceledException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (AuthenticatorException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }, handler);
+
+        }
+    }
+
+    private void checkCookie() {
+        final AccountManager am = AccountManager.get(getBaseContext());
+        String cookie = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString("cookie",null);
+        if (cookie!=null)
+        {
+            String[] params = cookie.split(";");
+
+            Date d = new Date();
+            for (String param : params) {
+                String[] ckie = param.split("=");
+                if ("expires".equalsIgnoreCase(ckie[0].trim()))
+                {
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss Z", Locale.ENGLISH);
+
+                    try {
+                        d = sdf.parse(ckie[1]);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            if((new Date()).after(d))
+            {
+                am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, cookie);
+                getCookie(am);
+            }
+        }
 
     }
 
@@ -105,6 +219,8 @@ public class MainActivity extends SpiceActionBarActivity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
+
+        checkCookie();
     }
 
     @Override

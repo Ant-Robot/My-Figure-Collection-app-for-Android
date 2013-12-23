@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -24,12 +25,11 @@ import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
 import net.myfigurecollection.api.request.CollectionRequest;
-import net.myfigurecollection.authentication.AccountGeneral;
-import net.myfigurecollection.authentication.AuthenticatorActivity;
 import net.myfigurecollection.widgets.SpiceListFragment;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +43,9 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private final Type type_list_item = new TypeToken<List<Item>>() {
+    }.getType();
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
@@ -82,9 +85,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
         String stringitems = null;
         if (savedInstanceState != null) stringitems = savedInstanceState.getString("items");
         if (stringitems != null && !stringitems.equalsIgnoreCase("null")) {
-            Type type = new TypeToken<List<Item>>() {
-            }.getType();
-            items = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(stringitems, type);
+            items = gson.fromJson(stringitems, type_list_item);
             setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
         } else {
             currentPage = 1;
@@ -111,7 +112,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
             out = new Bundle();
         }
 
-        out.putString("items", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(items));
+        out.putString("items", gson.toJson(items));
         super.onSaveInstanceState(out);
     }
 
@@ -131,39 +132,71 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
     @Override
     public void onRequestFailure(SpiceException e) {
         Toast.makeText(this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+        CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+
+        String status = "status_na";
+        switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
+            case 0:
+                status = CollectionRequest.COLLECTION_STATUS_WISHED;
+                break;
+            case 1:
+                status = CollectionRequest.COLLECTION_STATUS_ORDERED;
+                break;
+            case 2:
+                status = CollectionRequest.COLLECTION_STATUS_OWNED;
+                break;
+        }
+
+        items = gson.fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).getString(status, ""), type_list_item);
+
+        setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
     }
 
     @Override
     public void onRequestSuccess(CollectionMode collectionMode) {
 
         String max = "1";
+        String status = "status_na", last = "status_na_date";
 
         if (currentPage == 1) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 items = collectionMode.getCollection().getWished().getItem();
                 max = collectionMode.getCollection().getWished().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_WISHED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_WISHED;
                 break;
             case 1:
                 items = collectionMode.getCollection().getOrdered().getItem();
                 max = collectionMode.getCollection().getOrdered().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_ORDERED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_ORDERED;
                 break;
             case 2:
                 items = collectionMode.getCollection().getOwned().getItem();
                 max = collectionMode.getCollection().getOwned().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_OWNED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_OWNED;
                 break;
         }
         else switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 items.addAll(collectionMode.getCollection().getWished().getItem());
                 max = collectionMode.getCollection().getWished().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_WISHED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_WISHED;
                 break;
             case 1:
                 items.addAll(collectionMode.getCollection().getOrdered().getItem());
                 max = collectionMode.getCollection().getOrdered().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_ORDERED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_ORDERED;
                 break;
             case 2:
                 items.addAll(collectionMode.getCollection().getOwned().getItem());
                 max = collectionMode.getCollection().getOwned().getNum_pages();
+                status = CollectionRequest.COLLECTION_STATUS_OWNED;
+                last = CollectionRequest.COLLECTION_STATUS_LAST_OWNED;
                 break;
         }
 
@@ -175,6 +208,10 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
             setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
+
+
+            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status, gson.toJson(items, type_list_item)).commit();
+            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong(last, new Date().getTime()).commit();
         }
 
     }
@@ -184,7 +221,9 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
         super.onListItemClick(l, v, position, id);
         Intent itemView = new Intent(getActivity().getBaseContext(), ItemActivity.class);
         Bundle b = new Bundle();
-        b.putString("item", new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().toJson(items.get(position)));
+        Item src = items.get(position);
+        src.setStatus(getArguments().getInt(ARG_SECTION_NUMBER));
+        b.putString("item", gson.toJson(src));
         /*b.putString(AuthenticatorActivity.ARG_ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE);
         b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);*/
         itemView.putExtras(b);

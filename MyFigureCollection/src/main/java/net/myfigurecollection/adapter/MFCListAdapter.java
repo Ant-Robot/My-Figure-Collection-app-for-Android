@@ -8,6 +8,7 @@ import com.octo.android.robospice.spicelist.SpiceListItemView;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpSpiceArrayAdapter;
 
+import net.myfigurecollection.R;
 import net.myfigurecollection.api.Item;
 import net.myfigurecollection.view.ItemView;
 
@@ -26,8 +27,9 @@ public class MFCListAdapter extends OkHttpSpiceArrayAdapter<Item> {
 
     @Override
     public OkHttpBitmapRequest createRequest(Item item, int imageIndex, int requestImageWidth, int requestImageHeight) {
-        File tempFile = new File(getContext().getCacheDir(), "THUMB_IMAGE_TEMP_" + item.getData().getId());
-        return new OkHttpBitmapRequest("http://myfigurecollection.net/pics/figure/" + item.getData().getId()+".jpg", requestImageWidth,
+        File tempFile = new File(getContext().getExternalCacheDir(), getContext().getString(R.string.mfc_cache_thumbs_item,item.getData().getId()));
+
+        return new OkHttpBitmapRequest(getContext().getString(R.string.mfc_figure_pics_thumb_root,item.getData().getId()), requestImageWidth,
                 requestImageHeight, tempFile);
     }
 

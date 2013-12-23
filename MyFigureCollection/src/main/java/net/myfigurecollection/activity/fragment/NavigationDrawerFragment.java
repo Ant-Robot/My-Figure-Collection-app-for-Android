@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,6 +35,7 @@ import com.octo.android.robospice.request.simple.SmallBinaryRequest;
 import com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceManager;
 
 import net.myfigurecollection.R;
+import net.myfigurecollection.adapter.MenuDrawerAdapter;
 import net.myfigurecollection.api.User;
 import net.myfigurecollection.api.UserMode;
 import net.myfigurecollection.api.request.UserRequest;
@@ -43,7 +43,12 @@ import net.myfigurecollection.authentication.AccountGeneral;
 import net.myfigurecollection.authentication.AuthenticatorActivity;
 import net.myfigurecollection.widgets.SpiceFragment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import hugo.weaving.DebugLog;
 
@@ -150,15 +155,9 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
             header = inflater.inflate(R.layout.header_navigation_drawer, container, false);
             mDrawerListView.addHeaderView(header);
 
-            mDrawerListView.setAdapter(new ArrayAdapter<String>(
+            mDrawerListView.setAdapter(new MenuDrawerAdapter(
                     getActionBar().getThemedContext(),
-                    android.R.layout.simple_list_item_1,
-                    android.R.id.text1,
-                    new String[]{
-                            getString(R.string.title_section1),
-                            getString(R.string.title_section2),
-                            getString(R.string.title_section3),
-                    }));
+                    R.layout.view_cell_drawer));
             //mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         }
 
@@ -386,25 +385,56 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
     }
 
     @DebugLog
-    private boolean fillUserInfos(User user) {
+    private boolean fillUserInfos(final User user) {
         SmallBinaryRequest req = new SmallBinaryRequest(AVATAR_ROOT + user.getPicture());
 
-        spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ONE_DAY, new RequestListener<InputStream>() {
-            @Override
-            public void onRequestFailure(SpiceException e) {
-                Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
 
-            @Override
-            public void onRequestSuccess(InputStream file) {
-                Bitmap bitmap;
+        File tempFile = new File(getActivity().getExternalCacheDir(), "AVATAR_" + user.getPicture());
+        if (tempFile.exists()) {
+            Bitmap bitmap;
 
-                bitmap = BitmapFactory.decodeStream(file);
 
-                ((ImageView) header.findViewById(R.id.imageAvatar)).setImageBitmap(bitmap);
+            bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+            ((ImageView) header.findViewById(R.id.imageAvatar)).setImageBitmap(bitmap);
+        } else
+            spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ONE_DAY, new RequestListener<InputStream>() {
+                @Override
+                public void onRequestFailure(SpiceException e) {
+                    Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
 
-            }
-        });
+                @Override
+                public void onRequestSuccess(InputStream file) {
+                    File tempFile = new File(getActivity().getExternalCacheDir(), "AVATAR_" + user.getPicture());
+
+                    OutputStream out = null;
+                    try {
+                        out = new FileOutputStream(tempFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    byte buf[] = new byte[1024];
+                    int len;
+                    try {
+                        while ((len = file.read(buf)) > 0)
+                            out.write(buf, 0, len);
+                        out.close();
+                        file.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Bitmap bitmap;
+
+
+                    bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+
+                    ((ImageView) header.findViewById(R.id.imageAvatar)).setImageBitmap(bitmap);
+
+                }
+            });
 
         return false;
     }

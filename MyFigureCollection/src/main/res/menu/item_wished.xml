@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity" >
+    <item android:id="@+id/action_order"
+          android:icon="@drawable/ic_action_ordered"
+          android:title="@string/title_section2"
+          app:showAsAction="withText|ifRoom" />
+    <item android:id="@+id/action_own"
+          android:icon="@drawable/ic_action_owned"
+          android:title="@string/title_section3"
+          app:showAsAction="withText|ifRoom" />
+    <item android:id="@+id/action_delete"
+        android:icon="@drawable/ic_action_delete"
+        android:title="@string/action_example"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+</menu>

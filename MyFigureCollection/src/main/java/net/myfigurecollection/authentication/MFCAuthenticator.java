@@ -40,6 +40,7 @@ import static net.myfigurecollection.authentication.AccountGeneral.AUTHTOKEN_TYP
  */
 public class MFCAuthenticator extends AbstractAccountAuthenticator {
 
+
     private final Context mContext;
     private String TAG = "MFCAuthenticator";
 
@@ -83,7 +84,6 @@ public class MFCAuthenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(mContext);
 
 
-
         // Lets give another try to authenticate the user
         String authToken = null;
         String password = null;
@@ -102,11 +102,11 @@ public class MFCAuthenticator extends AbstractAccountAuthenticator {
 
 
                 Map<String, String> params = new TreeMap<String, String>();
-                params.put("username", account.name);
-                params.put("password", password);
-                params.put("set_cookie", "1");
-                params.put("commit", "signin");
-                params.put("location", "http://myfigurecollection.net/");
+                params.put(ConnectionRequest.PARAM_USERNAME, account.name);
+                params.put(ConnectionRequest.PARAM_PASSWORD, password);
+                params.put(ConnectionRequest.PARAM_SET_COOKIE, ConnectionRequest.VALUE_SET_COOKIE);
+                params.put(ConnectionRequest.PARAM_COMMIT, ConnectionRequest.VALUE_COMMIT);
+                params.put(ConnectionRequest.PARAM_LOCATION, ConnectionRequest.VALUE_LOCATION);
 
                 UrlEncodedContent content = new UrlEncodedContent(params);
 
@@ -121,7 +121,7 @@ public class MFCAuthenticator extends AbstractAccountAuthenticator {
                     @Override
                     public boolean handleResponse(HttpRequest httpRequest, HttpResponse httpResponse, boolean b) throws IOException {
 
-                        res[0] = httpResponse.getHeaders().get("Set-Cookie").toString();
+                        res[0] = httpResponse.getHeaders().get(ConnectionRequest.HEADER_SET_COOKIE).toString();
 
                         return false;
                     }

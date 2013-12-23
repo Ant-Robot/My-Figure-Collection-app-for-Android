@@ -1,7 +1,6 @@
 package net.myfigurecollection.api.request;
 
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
@@ -21,6 +20,16 @@ import hugo.weaving.DebugLog;
 public class ConnectionRequest extends GoogleHttpClientSpiceRequest<String> {
 
     public final static String URL = "https://secure.myfigurecollection.net/sign/in/";
+    public static final String PARAM_USERNAME = "username";
+    public static final String PARAM_PASSWORD = "password";
+    public static final String PARAM_SET_COOKIE = "set_cookie";
+    public static final String PARAM_COMMIT = "commit";
+    public static final String PARAM_LOCATION = "location";
+    public static final String VALUE_LOCATION = "http://myfigurecollection.net/";
+    public static final String VALUE_COMMIT = "signin";
+    public static final String VALUE_SET_COOKIE = "1";
+    public static final String HEADER_SET_COOKIE = "Set-Cookie";
+
     String mUsername, mPassword;
 
     public ConnectionRequest(String username, String password) {
@@ -39,11 +48,11 @@ public class ConnectionRequest extends GoogleHttpClientSpiceRequest<String> {
 
 
         Map<String, String> params = new TreeMap<String, String>();
-        params.put("username", mUsername);
-        params.put("password", mPassword);
-        params.put("set_cookie", "1");
-        params.put("commit", "signin");
-        params.put("location", "http://myfigurecollection.net/");
+        params.put(PARAM_USERNAME, mUsername);
+        params.put(PARAM_PASSWORD, mPassword);
+        params.put(PARAM_SET_COOKIE, VALUE_SET_COOKIE);
+        params.put(PARAM_COMMIT, VALUE_COMMIT);
+        params.put(PARAM_LOCATION, VALUE_LOCATION);
 
         UrlEncodedContent content = new UrlEncodedContent(params);
 
@@ -58,7 +67,7 @@ public class ConnectionRequest extends GoogleHttpClientSpiceRequest<String> {
             @Override
             public boolean handleResponse(HttpRequest httpRequest, HttpResponse httpResponse, boolean b) throws IOException {
 
-                res[0] = httpResponse.getHeaders().get("Set-Cookie").toString();
+                res[0] = httpResponse.getHeaders().get(HEADER_SET_COOKIE).toString();
 
                 return false;
             }

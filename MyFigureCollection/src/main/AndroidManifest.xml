@@ -1,63 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.myfigurecollection"
-    android:versionCode="1"
-    android:versionName="1.0" >
+          package="net.myfigurecollection"
+          android:versionCode="1"
+          android:versionName="1.0">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="19" />
+            android:minSdkVersion="9"
+            android:targetSdkVersion="19"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"
+            android:largeHeap="true">
         <activity
-            android:name="net.myfigurecollection.activity.MainActivity"
-            android:label="@string/app_name" >
+                android:name="net.myfigurecollection.activity.MainActivity"
+                android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.octo.android.robospice.GsonGoogleHttpClientSpiceService"
-            android:exported="false" />
+                android:name="com.octo.android.robospice.GsonGoogleHttpClientSpiceService"
+                android:exported="false"/>
         <service
-            android:name="com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceService"
-            android:exported="false" />
+                android:name="com.octo.android.robospice.spicelist.okhttp.OkHttpBitmapSpiceService"
+                android:exported="false"/>
 
         <activity
-            android:name="net.myfigurecollection.authentication.AuthenticatorActivity"
-            android:label="@string/login_label" />
+                android:name="net.myfigurecollection.authentication.AuthenticatorActivity"
+                android:label="@string/login_label"/>
 
-        <service android:name="net.myfigurecollection.authentication.MFCAuthenticatorService" >
+        <service android:name="net.myfigurecollection.authentication.MFCAuthenticatorService"
+                 android:permission="">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
 
             <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
         </service>
 
         <activity
-            android:name="net.myfigurecollection.activity.ItemActivity"
-            android:parentActivityName="net.myfigurecollection.activity.MainActivity"
-            android:label="@string/title_activity_item" >
+                android:name="net.myfigurecollection.activity.ItemActivity"
+                android:parentActivityName="net.myfigurecollection.activity.MainActivity"
+                android:label="@string/title_activity_item">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.myfigurecollection.activity.ItemActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.myfigurecollection.activity.ItemActivity"/>
 
         </activity>
     </application>

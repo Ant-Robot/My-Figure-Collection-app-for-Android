@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:choiceMode="singleChoice"
     android:dividerHeight="1dp"
-    android:background="#cccc"
+    android:background="#C333"
     tools:context="net.myfigurecollection.activity.fragment.NavigationDrawerFragment"
     android:footerDividersEnabled="true"
     android:headerDividersEnabled="true" />

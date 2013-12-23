@@ -9,7 +9,7 @@
     <string name="title_item_section2">View on MFC</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
+    <string name="action_example">Delete</string>
     <string name="action_settings">Settings</string>
     <string name="signup_title">Create new account</string>
     <string name="login_label">Log in</string>
@@ -20,5 +20,18 @@
     <string name="main_choose">☚ Choose a category here</string>
     <string name="title_activity_item">Item details</string>
     <string name="description_zoom_touch_close">Expanded image (touch to close)</string>
+    <string name="tsukotan">Tsuko-tan</string>
+    <string name="mfc_figure_pics_thumb_root">http://myfigurecollection.net/pics/figure/%s.jpg</string>
+    <string name="mfc_figure_pics_big_root">http://myfigurecollection.net/pics/figure/big/%s.jpg</string>
+    <string name="mfc_cache_thumbs_item">FIGURE_%s_THUMB.jpg</string>
+    <string name="mfc_cache_pic_item">FIGURE_%s.jpg</string>
+    <string name="mfc_cache_thumbs_gallery">GALLERY_%s_THUMB.jpg</string>
+    <string name="mfc_cache_pic_gallery">GALLERY_%s.jpg</string>
+    <string name="title_item_section0">Item</string>
+    <string name="wishability">Wishability</string>
+    <string name="Score">Score</string>
+    <string name="release_date">Release Date</string>
+    <string name="jan">JAN</string>
+    <string name="isbn">ISBN</string>
 
 </resources>

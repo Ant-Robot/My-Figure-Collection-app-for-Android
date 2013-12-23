@@ -26,7 +26,8 @@
         android:background="@android:drawable/picture_frame"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="5dp"
+        android:src="@drawable/tsuki4"/>
 
     <TextView
         android:id="@+id/item_name_textview"
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/octo_thumbnail_imageview"
         android:layout_alignParentTop="true"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
@@ -43,7 +44,7 @@
         style="@android:style/TextAppearance.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="italic"
         android:layout_below="@+id/item_name_textview"
         android:layout_toRightOf="@+id/octo_thumbnail_imageview" />

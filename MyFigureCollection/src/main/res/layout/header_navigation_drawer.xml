@@ -19,6 +19,8 @@
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
         android:minWidth="200dp"
-        android:background="#0000"
-        android:textStyle="bold" />
+        android:background="#0FFF"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:textColor="#CCCC"/>
 </LinearLayout>
