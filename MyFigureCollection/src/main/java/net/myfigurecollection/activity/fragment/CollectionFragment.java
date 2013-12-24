@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -25,17 +25,19 @@ import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
 import net.myfigurecollection.api.request.CollectionRequest;
-import net.myfigurecollection.widgets.SpiceListFragment;
+import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CollectionFragment extends SpiceListFragment implements RequestListener<CollectionMode> {
+public class CollectionFragment extends SpiceFragment implements RequestListener<CollectionMode>, AdapterView.OnItemClickListener {
 
 
     /**
@@ -46,6 +48,7 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private final Type type_list_item = new TypeToken<List<Item>>() {
     }.getType();
+    private StickyListHeadersListView mList;
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
@@ -82,11 +85,14 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+       mList = (StickyListHeadersListView) getActivity().findViewById(android.R.id.list);
+
         String stringitems = null;
         if (savedInstanceState != null) stringitems = savedInstanceState.getString("items");
         if (stringitems != null && !stringitems.equalsIgnoreCase("null")) {
             items = gson.fromJson(stringitems, type_list_item);
-            setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
+            mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+            mList.setOnItemClickListener(this);
         } else {
             currentPage = 1;
             getCollection();
@@ -150,7 +156,8 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
 
         items = gson.fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).getString(status, ""), type_list_item);
 
-        setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
+        mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+        mList.setOnItemClickListener(this);
     }
 
     @Override
@@ -207,7 +214,8 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
         } else {
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
-            setListAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items));
+            mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+            mList.setOnItemClickListener(this);
 
 
             PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status, gson.toJson(items, type_list_item)).commit();
@@ -216,9 +224,10 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
 
     }
 
+
+
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         Intent itemView = new Intent(getActivity().getBaseContext(), ItemActivity.class);
         Bundle b = new Bundle();
         Item src = items.get(position);
@@ -228,5 +237,6 @@ public class CollectionFragment extends SpiceListFragment implements RequestList
         b.putBoolean(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);*/
         itemView.putExtras(b);
         startActivity(itemView);
+
     }
 }

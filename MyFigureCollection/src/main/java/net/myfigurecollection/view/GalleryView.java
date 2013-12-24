@@ -1,6 +1,7 @@
 package net.myfigurecollection.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,11 +24,14 @@ public class GalleryView extends RelativeLayout implements SpiceListItemView<Pic
     private void inflateView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_cell_gallery, this);
         this.thumbImageView = (ImageView) this.findViewById(R.id.octo_thumbnail_imageview);
+
     }
 
     @Override
     public void update(Picture item) {
         this.item = item;
+        if (thumbImageView!=null)
+            this.thumbImageView.setBackgroundColor(Color.parseColor(item.getCategory().getColor()));
     }
 
     @Override
@@ -38,12 +42,15 @@ public class GalleryView extends RelativeLayout implements SpiceListItemView<Pic
     @Override
     public ImageView getImageView(int imageIndex) {
         return thumbImageView;
+
+
     }
 
     @Override
     public int getImageViewCount() {
         return 1;
     }
+
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

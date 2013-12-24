@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.annotation.Generated;
 
 @Generated("com.googlecode.jsonschema2pojo")
-public class Picture {
+public class Picture implements Comparable<Picture>{
 
     @Key
     @Expose
@@ -116,4 +116,12 @@ public class Picture {
         return ToStringBuilder.reflectionToString(this);
     }
 
+    @Override
+    public int compareTo(Picture another) {
+        if (another.getCategory().getName().equalsIgnoreCase(getCategory().getName()))
+        {
+            return this.getDate().compareTo(another.getDate());
+        }
+        return this.getCategory().getName().compareTo(another.getCategory().getName());
+    }
 }

@@ -16,7 +16,9 @@
         android:contentDescription=""
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:clickable="false" />
+        android:padding="4dp"
+        android:clickable="false"
+        android:cropToPadding="true"/>
 
 
 

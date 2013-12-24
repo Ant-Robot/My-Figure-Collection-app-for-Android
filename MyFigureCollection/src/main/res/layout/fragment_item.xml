@@ -7,14 +7,14 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
               android:paddingBottom="@dimen/activity_vertical_margin"
-              tools:context="net.myfigurecollection.activity.ItemActivity$PlaceholderFragment">
+              tools:context="net.myfigurecollection.activity.fragment.ItemFragment">
 
     <net.myfigurecollection.view.ItemView
             android:id="@+id/infos"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"></net.myfigurecollection.view.ItemView>
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
 
     <ScrollView
             android:layout_width="match_parent"
@@ -46,13 +46,12 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/ratingBar"
                         android:layout_gravity="center_horizontal|top"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
                         android:numStars="5"
                         android:stepSize="0.5"/>
             </LinearLayout>
 
             <LinearLayout
+                    android:id="@+id/layout_date"
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -70,7 +69,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="Small Text"
                         android:id="@+id/label"
                         android:layout_gravity="center_horizontal"/>
             </LinearLayout>
@@ -80,7 +78,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:id="@+id/linearLayout">
+                    android:id="@+id/layout_jan">
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -94,7 +92,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="Small Text"
                         android:id="@+id/label"
                         android:layout_gravity="center_horizontal"/>
             </LinearLayout>
@@ -104,7 +101,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:id="@+id/linearLayout2">
+                    android:id="@+id/layout_isbn">
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -118,7 +115,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="Small Text"
                         android:id="@+id/label"
                         android:layout_gravity="center_horizontal"/>
             </LinearLayout>

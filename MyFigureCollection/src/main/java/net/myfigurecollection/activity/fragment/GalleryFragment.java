@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -146,7 +147,9 @@ public class GalleryFragment extends SpiceFragment {
             Type type = new TypeToken<List<Picture>>() {
             }.getType();
             items = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(stringitems, type);
-            ((GridView) view.findViewById(R.id.gridView)).setAdapter(new MFCGalleryAdapter(getActivity(), spiceManagerBinary, items));
+            Collections.sort(items);
+            ((GridView) view.findViewById(R.id.gridView)).setAdapter(new MFCGalleryAdapter(getActivity(), spiceManagerBinary, items,R.layout.header));
+
 
         } else {
             currentPage = 1;
@@ -245,15 +248,15 @@ public class GalleryFragment extends SpiceFragment {
 
                     if (currentPage == 1) {
                         items = galleryMode.getGallery().getPicture();
-                        view.setAdapter(new MFCGalleryAdapter(getActivity(), spiceManagerBinary, items));
+                        Collections.sort(items);
                     } else {
                         items.addAll(galleryMode.getGallery().getPicture());
-                        ((MFCGalleryAdapter) view.getAdapter()).notifyDataSetChanged();
+                        Collections.sort(items);
                     }
 
                     if (currentPage++ >= max) {
+                        view.setAdapter(new MFCGalleryAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
                         getActivity().setProgressBarIndeterminateVisibility(false);
-                        ((MFCGalleryAdapter) view.getAdapter()).notifyDataSetChanged();
                     } else {
                         getGallery(view);
                     }

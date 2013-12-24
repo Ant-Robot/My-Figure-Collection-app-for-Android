@@ -123,6 +123,10 @@ public class Item implements Comparable<Item> {
 
     @Override
     public int compareTo(Item another) {
-        return this.getData().getName().compareTo(another.getData().getName());
+        if (another.getCategory().getName().equalsIgnoreCase(getCategory().getName()))
+        {
+            return this.getName().compareTo(another.getName());
+        }
+        return this.getCategory().getName().compareTo(another.getCategory().getName());
     }
 }
