@@ -39,9 +39,11 @@ dependencies {
     compile 'com.octo.android.robospice:robospice-okhttp:1.4.9'
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile 'com.android.support:support-v4:19.0.+'
-    compile 'javax.annotation:javax.annotation-api:1.2-b03'
     compile 'com.tonicartos:stickygridheaders:1.0.+'
     compile 'se.emilsjolander:stickylistheaders:2.1.+'
+    compile 'javax.annotation:javax.annotation-api:1.2-b03'
+    
+    
     compile 'com.google.http-client:google-http-client:1.17.0-rc'
     compile 'com.google.http-client:google-http-client-android:1.17.0-rc'
     compile ('com.google.http-client:google-http-client-gson:1.17.0-rc')

@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.octo.android.robospice.request.listener.RequestListener;
 
+import net.myfigurecollection.R;
+
 import hugo.weaving.DebugLog;
 
 /**
@@ -24,7 +26,8 @@ public class MFCRequestListener<T> implements RequestListener<T> {
 
     @Override
     public void onRequestFailure(com.octo.android.robospice.persistence.exception.SpiceException spiceException) {
-        Toast.makeText(activity, "Error during request: " + spiceException.getMessage(), Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, activity.getResources().getString(R.string.request_error, spiceException.getMessage()), Toast.LENGTH_LONG).show();
+        activity.setProgressBarIndeterminateVisibility(false);
     }
 
     @Override

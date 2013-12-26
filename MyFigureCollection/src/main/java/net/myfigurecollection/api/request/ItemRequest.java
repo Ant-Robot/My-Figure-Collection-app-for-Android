@@ -1,7 +1,6 @@
 package net.myfigurecollection.api.request;
 
 import android.app.Activity;
-import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.google.api.client.http.GenericUrl;
@@ -10,6 +9,7 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
 import com.google.api.client.http.UrlEncodedContent;
+import com.google.api.client.json.gson.GsonFactory;
 import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpiceRequest;
 
 import net.myfigurecollection.api.Item;
@@ -34,6 +34,7 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
     public final static String CAT_OWNED = "2";
     public final static String CAT_WISHED = "0";
     public static final String CAT_REMOVED = "9";
+    public static final String CAT_ADDED = "8";
     public static final String PARAM_COMMIT = "commit";
     public static final String PARAM_EXIT = "exit";
     public static final String PARAM_STATUS = "status";
@@ -47,7 +48,7 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
     public static final String PARAM_VALUE = "value";
     public static final String PARAM_BUY_DATE = "bdate";
     public static final String PARAM_SHIP_DATE = "sdate";
-    private static final String MFC_POST_URL = "http://myfigurecollection.net/items.php?mode=Android&iid=";
+    private static final String MFC_POST_URL = "http://myfigurecollection.net/items.php?iid=%s";
     private String shipping_date;
     private String paid_date;
     private String mPaid;
@@ -62,17 +63,29 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
     private Item mItem;
     private Activity mContext;
 
-    public ItemRequest(Item item, Context cntxt) {
+    public ItemRequest(Item item, Activity cntxt) {
         super(StatusAnswer.class);
         this.mItem = item;
+        this.mContext = cntxt;
+        this.shipping_date = this.paid_date = this.mDate = "0000-00-00";
     }
 
     public void postData(String shop, String wishability, String status, String prevStatus, String number, String score, String formattedDate, String price) {
+
+        switch (Integer.parseInt(status))
+        {
+            case 1:
+                paid_date = formattedDate;
+                break;
+            case 2:
+                mDate = formattedDate;
+                break;
+        }
+
         this.mPrevstat = prevStatus;
         this.mStatus = status;
         this.mNum = number;
         this.mScore = score;
-        this.mDate = formattedDate;
         this.mShop = shop;
         this.mPaid = price;
         this.mWishability = wishability;
@@ -82,7 +95,7 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
      * @param wishability How much do you want the figure (0 to 5)
      */
     public void wish(String wishability) {
-        postData("", wishability, CAT_WISHED, this.mItem.getStatus().toString(), "1", "-1", getFormattedDate(new Date()), "");
+        postData("", wishability, CAT_WISHED, this.mItem.getStatus().toString(), "1", "-1", null, "");
     }
 
     /**
@@ -90,14 +103,13 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
      * @param paid The price you paid
      */
     public void order(String shop, String paid, String num) {
-        postData(shop, "", CAT_ORDERED, this.mItem.getStatus().toString(), num, "-1", getFormattedDate(new Date()), paid);
+        postData(shop, mItem.getMycollection().getWishability(), CAT_ORDERED, this.mItem.getStatus().toString(), num, "-1", getFormattedDate(new Date()), paid);
     }
 
     /**
-     * @param id The figure id
      */
-    public void remove(String id, String num) {
-        postData("", "", CAT_REMOVED, this.mItem.getStatus().toString(), num, "-1", getFormattedDate(new Date()), "");
+    public void remove(String num) {
+        postData("", mItem.getMycollection().getWishability(), CAT_REMOVED, this.mItem.getStatus().toString(), num, "-1", getFormattedDate(new Date()), "");
     }
 
     /**
@@ -122,28 +134,32 @@ public class ItemRequest extends GoogleHttpClientSpiceRequest<StatusAnswer> {
 
 
         String cookie = PreferenceManager.getDefaultSharedPreferences(mContext).getString("cookie", "");
+        cookie = cookie.substring(cookie.indexOf('[')+1,cookie.lastIndexOf(']'));
 
         HttpRequest request = null;
         HttpRequestFactory requestFactory = getHttpRequestFactory();
-        GenericUrl gUrl = new GenericUrl(MFC_POST_URL);
+        GenericUrl gUrl = new GenericUrl(String.format(MFC_POST_URL, mItem.getData().getId()));
         Map<String, String> params = new TreeMap<String, String>();
         params.put(PARAM_COMMIT, "collect");
-        params.put(PARAM_EXIT, "1");
         params.put(PARAM_STATUS, mStatus);
         params.put(PARAM_NUM, mNum);
-        params.put(PARAM_DATE, mDate);
         params.put(PARAM_SCORE, mScore);
-        params.put(PARAM_CAT, my_category_id);
+        params.put(PARAM_DATE, mDate);
         params.put(PARAM_WISHABILITY, mWishability);
-        params.put(PARAM_PREVIOUS_STATUS, mPrevstat);
-        params.put(PARAM_SHOP, mShop);
         params.put(PARAM_VALUE, mPaid);
+        params.put(PARAM_SHOP, mShop);
+        params.put("method", "0"); //TODO: shipping method
         params.put(PARAM_BUY_DATE, paid_date);
         params.put(PARAM_SHIP_DATE, shipping_date);
+        params.put(PARAM_PREVIOUS_STATUS, mPrevstat);
+        //params.put(PARAM_EXIT, "1");
+        params.put("reload", "0");
         UrlEncodedContent content = new UrlEncodedContent(params);
 
 
         request = requestFactory.buildPostRequest(gUrl, content);
+        request.setParser(new GsonFactory().createJsonObjectParser());
+
         request.getHeaders().setCookie(cookie);
 
         final String[] res = {null};

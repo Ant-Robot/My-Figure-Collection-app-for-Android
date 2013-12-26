@@ -6,14 +6,19 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -66,7 +71,6 @@ public class MainActivity extends SpiceActionBarActivity
         if (user != null && getSupportFragmentManager().getFragments().size() <= 1) {
             getGallery(user);
         }
-
 
 
         checkCookie();
@@ -137,16 +141,14 @@ public class MainActivity extends SpiceActionBarActivity
 
     private void checkCookie() {
         final AccountManager am = AccountManager.get(getBaseContext());
-        String cookie = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString("cookie",null);
-        if (cookie!=null)
-        {
+        String cookie = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString("cookie", null);
+        if (cookie != null) {
             String[] params = cookie.split(";");
 
             Date d = new Date();
             for (String param : params) {
                 String[] ckie = param.split("=");
-                if ("expires".equalsIgnoreCase(ckie[0].trim()))
-                {
+                if ("expires".equalsIgnoreCase(ckie[0].trim())) {
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss Z", Locale.ENGLISH);
 
                     try {
@@ -158,8 +160,7 @@ public class MainActivity extends SpiceActionBarActivity
                 }
             }
 
-            if((new Date()).after(d))
-            {
+            if ((new Date()).after(d)) {
                 am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, cookie);
                 getCookie(am);
             }
@@ -223,6 +224,7 @@ public class MainActivity extends SpiceActionBarActivity
         checkCookie();
     }
 
+    @TargetApi (Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -230,9 +232,24 @@ public class MainActivity extends SpiceActionBarActivity
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
+
+            // Associate searchable configuration with the SearchView
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                SearchManager searchManager =
+                        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+                SearchView searchView =
+                        (SearchView) menu.findItem(R.id.search).getActionView();
+                searchView.setSearchableInfo(
+                        searchManager.getSearchableInfo(getComponentName()));
+                searchView.setIconifiedByDefault(false);
+            }
+
             restoreActionBar();
+
             return true;
         }
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -242,7 +259,17 @@ public class MainActivity extends SpiceActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+
+        switch (id) {
+            case R.id.search:
+                onSearchRequested();
+                return true;
+            case R.id.action_settings:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override

@@ -16,30 +16,51 @@
         android:layout_gravity="center"
         android:layout_weight="1">
 
-        <ImageView
+        <FrameLayout
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
-                android:id="@+id/imageView"
                 android:layout_gravity="center"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/ratingBar"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="false"
                 android:layout_alignParentStart="false"
-                android:scaleType="fitCenter"/>
+                android:id="@+id/picLayout">
+
+            <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageView"
+                    android:layout_gravity="center"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignParentStart="false"
+                    android:scaleType="fitCenter"/>
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/imageViewNsfw"
+                    android:layout_gravity="center"
+                    android:src="@drawable/selector_nsfw"
+                    android:scaleType="fitXY"
+                    android:clickable="true"
+                    />
+        </FrameLayout>
+
+
 
         <net.myfigurecollection.view.ItemView
             android:id="@+id/infos"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/imageView"/>
+            android:layout_toLeftOf="@+id/picLayout"/>
 
         <ScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_below="@+id/infos"
-                android:layout_toLeftOf="@+id/imageView">
+                android:layout_toLeftOf="@+id/picLayout">
 
             <LinearLayout
                     android:orientation="vertical"

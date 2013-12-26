@@ -92,18 +92,6 @@ public class ItemActivity extends ActionBarActivity implements ActionBar.TabList
 
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        if (item != null)
-            switch (item.getStatus()) {
-                case 0:
-                    getMenuInflater().inflate(R.menu.item_wished, menu);
-                    break;
-                case 1:
-                    getMenuInflater().inflate(R.menu.item_ordered, menu);
-                    break;
-                case 2:
-                    getMenuInflater().inflate(R.menu.item_owned, menu);
-                    break;
-            }
 
         return true;
     }

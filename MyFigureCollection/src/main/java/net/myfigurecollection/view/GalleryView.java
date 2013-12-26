@@ -32,6 +32,11 @@ public class GalleryView extends RelativeLayout implements SpiceListItemView<Pic
         this.item = item;
         if (thumbImageView!=null)
             this.thumbImageView.setBackgroundColor(Color.parseColor(item.getCategory().getColor()));
+        this.setBackgroundColor(Color.parseColor(item.getCategory().getColor().replace("#","#22")));
+        if ("0".equals(item.getNsfw()))
+            this.findViewById(R.id.imageViewNsfw).setVisibility(GONE);
+        else
+            this.findViewById(R.id.imageViewNsfw).setVisibility(VISIBLE);
     }
 
     @Override

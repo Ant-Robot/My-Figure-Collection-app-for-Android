@@ -372,6 +372,9 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
 
     @Override
     public void onRequestFailure(SpiceException e) {
+        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
+        getActivity().setProgressBarIndeterminateVisibility(false);
+
         UserMode userMode = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("userMode", ""), UserMode.class);
 
         if (userMode != null) fillUserInfos(userMode.getUser());
@@ -400,7 +403,8 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
             spiceManager.execute(req, AVATAR_ROOT + user.getPicture(), DurationInMillis.ONE_DAY, new RequestListener<InputStream>() {
                 @Override
                 public void onRequestFailure(SpiceException e) {
-                    Toast.makeText(NavigationDrawerFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
+                    getActivity().setProgressBarIndeterminateVisibility(false);
                 }
 
                 @Override

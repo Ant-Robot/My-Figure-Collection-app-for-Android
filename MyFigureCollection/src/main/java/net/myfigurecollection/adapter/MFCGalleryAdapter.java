@@ -75,17 +75,10 @@ public class MFCGalleryAdapter extends OkHttpSpiceArrayAdapter<Picture> implemen
             holder = (HeaderViewHolder) convertView.getTag();
         }
 
-        Picture item = getItem(i);
-        CharSequence string;
-        if (item instanceof CharSequence) {
-            string = (CharSequence) item;
-        } else {
-            string = item.getCategory().getName();
-        }
 
         // set header text as first char in string
-        holder.textView.setText(string);
-        holder.textView.setBackgroundColor(Color.parseColor(item.getCategory().getColor()));
+        holder.textView.setText(getItem(i).getCategory().getName());
+        holder.textView.setBackgroundColor(Color.parseColor(getItem(i).getCategory().getColor()));
 
         return convertView;
     }

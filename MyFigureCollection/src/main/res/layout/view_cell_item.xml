@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="70dp"
+    android:layout_height="@dimen/thumbsize"
     tools:context=".view.ItemView">
 
     <View
@@ -15,19 +15,19 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
-        android:minHeight="70dp" />
+        android:minHeight="@dimen/thumbsize" />
 
     <ImageView
         android:id="@+id/octo_thumbnail_imageview"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/thumbsize"
+        android:layout_height="@dimen/thumbsize"
         android:scaleType="centerCrop"
         android:contentDescription=""
         android:background="@android:drawable/picture_frame"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="5dp"
-        android:src="@drawable/tsuki4"/>
+        android:src="@drawable/no250"/>
 
     <TextView
         android:id="@+id/item_name_textview"

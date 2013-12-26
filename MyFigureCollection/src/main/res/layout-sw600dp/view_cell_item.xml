@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="110dp"
+    android:layout_height="@dimen/thumbsize"
     tools:context=".MainActivity"
     >
 
@@ -20,8 +20,8 @@
 
     <ImageView
         android:id="@+id/octo_thumbnail_imageview"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:layout_width="@dimen/thumbsize"
+        android:layout_height="@dimen/thumbsize"
         android:scaleType="centerCrop"
         android:contentDescription=""
         android:background="@android:drawable/picture_frame"

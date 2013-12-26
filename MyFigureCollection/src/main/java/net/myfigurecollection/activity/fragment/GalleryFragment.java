@@ -6,7 +6,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -34,6 +33,7 @@ import net.myfigurecollection.adapter.MFCGalleryAdapter;
 import net.myfigurecollection.api.GalleryMode;
 import net.myfigurecollection.api.Picture;
 import net.myfigurecollection.api.request.GalleryRequest;
+import net.myfigurecollection.utils.Utils;
 import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.io.File;
@@ -163,25 +163,25 @@ public class GalleryFragment extends SpiceFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, final View tview, int position, long id) {
                 final Picture pic = items.get(position);
-                final View tviewf = tview;
 
                 SmallBinaryRequest req = new SmallBinaryRequest(pic.getSrc().replace("/thumbnails", ""));
 
                 getActivity().setProgressBarIndeterminateVisibility(true);
 
                 File tempFile = new File(getActivity().getExternalCacheDir(), getActivity().getString(R.string.mfc_cache_pic_gallery,pic.getId()));
+                final ImageView expandedImageView = (ImageView) viewf.findViewById(R.id.expanded_image);
+
                 if (tempFile.length()>0) {
-                    Bitmap bitmap;
-
-
-                    bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+                    Bitmap bitmap = Utils.getBitmapFromFile(tempFile.getPath(),expandedImageView.getMeasuredHeight(),expandedImageView.getMeasuredWidth());
+                            //BitmapFactory.decodeFile(tempFile.getPath());
                     getActivity().setProgressBarIndeterminateVisibility(false);
-                    zoomImageFromThumb(tviewf, (ImageView) viewf.findViewById(R.id.expanded_image), viewf, bitmap);
+                    zoomImageFromThumb(tview, expandedImageView, viewf, bitmap);
                 } else
                     spiceManager.execute(req, pic.getSrc().replace("/thumbnails", ""), DurationInMillis.ONE_WEEK * 52, new RequestListener<InputStream>() {
                         @Override
                         public void onRequestFailure(SpiceException e) {
-                            Toast.makeText(GalleryFragment.this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
+                            getActivity().setProgressBarIndeterminateVisibility(false);
                         }
 
                         @Override
@@ -210,9 +210,9 @@ public class GalleryFragment extends SpiceFragment {
                             Bitmap bitmap;
 
 
-                            bitmap = BitmapFactory.decodeFile(tempFile.getPath());
+                            bitmap = Utils.getBitmapFromFile(tempFile.getPath(), expandedImageView.getMeasuredHeight(), expandedImageView.getMeasuredWidth());
                             getActivity().setProgressBarIndeterminateVisibility(false);
-                            zoomImageFromThumb(tviewf, (ImageView) viewf.findViewById(R.id.expanded_image), viewf, bitmap);
+                            zoomImageFromThumb(tview, expandedImageView, viewf, bitmap);
 
                         }
                     });
@@ -239,7 +239,8 @@ public class GalleryFragment extends SpiceFragment {
             spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, new RequestListener<GalleryMode>() {
                 @Override
                 public void onRequestFailure(SpiceException e) {
-
+                    Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
+                    getActivity().setProgressBarIndeterminateVisibility(false);
                 }
 
                 @Override

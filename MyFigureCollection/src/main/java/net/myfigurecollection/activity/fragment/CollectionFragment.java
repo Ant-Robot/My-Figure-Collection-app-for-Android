@@ -137,7 +137,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
     @Override
     public void onRequestFailure(SpiceException e) {
-        Toast.makeText(this.getActivity(), "Error during request: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
+        getActivity().setProgressBarIndeterminateVisibility(false);
 
         CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
 

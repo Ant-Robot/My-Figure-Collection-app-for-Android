@@ -27,14 +27,17 @@ public class ItemSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return ItemFragment.newInstance(itemActivity.stringItem);
-            case 1:
-                return GalleryFragment.newInstance(itemActivity.item.getData().getId(), true);
-            default:
-                return WebFragment.newInstance("http://myfigurecollection.net/item/" + itemActivity.item.getData().getId());
-        }
+        if (itemActivity != null && itemActivity.item != null)
+            switch (position) {
+                case 0:
+                    itemActivity.supportInvalidateOptionsMenu();
+                    return ItemFragment.newInstance(itemActivity.stringItem);
+                case 1:
+                    return GalleryFragment.newInstance(itemActivity.item.getData().getId(), true);
+                default:
+                    return WebFragment.newInstance("http://myfigurecollection.net/item/" + itemActivity.item.getData().getId());
+            }
+        return null;
 
     }
 

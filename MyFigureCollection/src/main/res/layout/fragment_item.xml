@@ -119,14 +119,29 @@
                         android:layout_gravity="center_horizontal"/>
             </LinearLayout>
 
-            <ImageView
+            <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:id="@+id/imageView"
-                    android:layout_gravity="center"
-                    android:layout_alignParentStart="true"
-                    android:padding="10dp"
-                    />
+                    android:layout_height="wrap_content">
+
+                <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:id="@+id/imageView"
+                        android:layout_gravity="center"
+                        android:layout_alignParentStart="true"
+                        android:padding="10dp"
+                        />
+
+                <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/imageViewNsfw"
+                        android:layout_gravity="center"
+                        android:src="@drawable/selector_nsfw"
+                        android:scaleType="fitXY"
+                        android:clickable="true"
+                        android:visibility="gone"/>
+            </FrameLayout>
 
         </LinearLayout>
     </ScrollView>

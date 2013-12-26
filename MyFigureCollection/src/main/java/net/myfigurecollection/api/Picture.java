@@ -122,6 +122,6 @@ public class Picture implements Comparable<Picture>{
         {
             return this.getDate().compareTo(another.getDate());
         }
-        return this.getCategory().getName().compareTo(another.getCategory().getName());
+        return this.getCategory().getId().compareTo(another.getCategory().getId());
     }
 }

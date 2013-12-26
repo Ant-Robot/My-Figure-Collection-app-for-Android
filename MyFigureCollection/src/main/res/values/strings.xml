@@ -33,5 +33,10 @@
     <string name="release_date">Release Date</string>
     <string name="jan">JAN</string>
     <string name="isbn">ISBN</string>
+    <string name="request_error">Error during request: %s</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search a figure on My Figure Collection</string>
+    <string name="title_activity_search">Search Figure</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
