@@ -1,6 +1,7 @@
 package net.myfigurecollection.api.request;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.api.client.http.GenericUrl;
@@ -11,6 +12,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpiceRequest;
 
 import net.myfigurecollection.api.SearchMode;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import hugo.weaving.DebugLog;
 
@@ -29,7 +33,11 @@ public class SearchRequest extends GoogleHttpClientSpiceRequest<SearchMode> {
 
     public SearchRequest(String keywords) {
         super(SearchMode.class);
-        this.mKeywords = keywords;
+        try {
+            this.mKeywords = URLEncoder.encode(keywords,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     //@Override

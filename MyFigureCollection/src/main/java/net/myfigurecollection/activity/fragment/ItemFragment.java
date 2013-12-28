@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
@@ -98,7 +99,13 @@ public class ItemFragment extends SpiceFragment {
             itemView.update(item);
             final ImageView iv = (ImageView) itemView.findViewById(R.id.octo_thumbnail_imageview);
             final RatingBar stars = (RatingBar) rootView.findViewById(R.id.ratingBar);
-            stars.setRating(Float.parseFloat(item.getMycollection().getScore().equalsIgnoreCase("-1") ? item.getMycollection().getWishability() : item.getMycollection().getScore()) / 2.0f);
+            if (item.getMycollection()!=null){
+                if ("-1".equalsIgnoreCase(item.getMycollection().getScore())){
+                    stars.setRating(Float.parseFloat(item.getMycollection().getWishability()) / 2.0f);
+                    ((TextView)rootView.findViewById(R.id.layout_rating).findViewById(R.id.title)).setText(getString(R.string.Wishability));
+                }
+                else stars.setRating(Float.parseFloat(item.getMycollection().getScore()) / 2.0f);
+            }
 
             ViewTreeObserver vto = iv.getViewTreeObserver();
             if (vto != null) {

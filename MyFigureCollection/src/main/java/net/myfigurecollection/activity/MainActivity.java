@@ -6,7 +6,6 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends SpiceActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener, SearchView.OnQueryTextListener {
 
     final MainActivity cbt = this;
     private final Handler handler = new Handler();
@@ -54,7 +54,8 @@ public class MainActivity extends SpiceActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        //supportRequestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -78,64 +79,66 @@ public class MainActivity extends SpiceActionBarActivity
 
     }
 
+    @SuppressWarnings("deprecation")
     private void getCookie(AccountManager am) {
 
 
-        Account[] accounts = new Account[0];
+        Account[] accounts;
 
 
         if (am != null) {
             accounts = am.getAccountsByType(AccountGeneral.ACCOUNT_TYPE);
-        }
-        if (accounts.length > 0) {
-            amf = am.getAuthToken(accounts[0], AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY, true, new AccountManagerCallback<Bundle>() {
-                @Override
-                public void run(AccountManagerFuture<Bundle> future) {
-                    try {
-                        Bundle result;
-                        Intent i;
 
-                        result = future.getResult();
-                        if (result.containsKey(AccountManager.KEY_INTENT)) {
-                            i = (Intent) result.get(AccountManager.KEY_INTENT);
-                            if (i.toString().contains("GrantCredentialsPermissionActivity")) {
-                                // Will have to wait for the user to accept
-                                // the request therefore this will have to
-                                // run in a foreground application
-                                cbt.startActivity(i);
+            if (accounts.length > 0) {
+                amf = am.getAuthToken(accounts[0], AccountGeneral.AUTHTOKEN_TYPE_READ_ONLY, true, new AccountManagerCallback<Bundle>() {
+                    @Override
+                    public void run(AccountManagerFuture<Bundle> future) {
+                        try {
+                            Bundle result;
+                            Intent i;
+
+                            result = future.getResult();
+                            if (result.containsKey(AccountManager.KEY_INTENT)) {
+                                i = (Intent) result.get(AccountManager.KEY_INTENT);
+                                if (i.toString().contains("GrantCredentialsPermissionActivity")) {
+                                    // Will have to wait for the user to accept
+                                    // the request therefore this will have to
+                                    // run in a foreground application
+                                    cbt.startActivity(i);
+                                } else {
+                                    cbt.startActivity(i);
+                                }
+
                             } else {
-                                cbt.startActivity(i);
-                            }
-
-                        } else {
-                            String token = (String) result.get(AccountManager.KEY_AUTHTOKEN);
-                            if (token != null)
-                                PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().putString("cookie", token).commit();
+                                String token = (String) result.get(AccountManager.KEY_AUTHTOKEN);
+                                if (token != null)
+                                    PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().putString("cookie", token).commit();
 
                                 /*
                                  * work with token
                                  */
 
-                            // Remember to invalidate the token if the web service rejects it
-                            // if(response.isTokenInvalid()){
-                            //    accMgr.invalidateAuthToken(authTokenType, token);
-                            // }
-                            //am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, token);
+                                // Remember to invalidate the token if the web service rejects it
+                                // if(response.isTokenInvalid()){
+                                //    accMgr.invalidateAuthToken(authTokenType, token);
+                                // }
+                                //am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, token);
 
+                            }
+                        } catch (OperationCanceledException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (AuthenticatorException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
-                    } catch (OperationCanceledException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (AuthenticatorException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
                     }
-                }
-            }, handler);
+                }, handler);
 
+            }
         }
     }
 
@@ -161,8 +164,10 @@ public class MainActivity extends SpiceActionBarActivity
             }
 
             if ((new Date()).after(d)) {
-                am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, cookie);
-                getCookie(am);
+                if (am != null) {
+                    am.invalidateAuthToken(AccountGeneral.ACCOUNT_TYPE, cookie);
+                    getCookie(am);
+                }
             }
         }
 
@@ -224,7 +229,6 @@ public class MainActivity extends SpiceActionBarActivity
         checkCookie();
     }
 
-    @TargetApi (Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -233,15 +237,24 @@ public class MainActivity extends SpiceActionBarActivity
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
 
+            SearchView searchView = null;
             // Associate searchable configuration with the SearchView
+            MenuItem menuItem = menu.findItem(R.id.search);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 SearchManager searchManager =
                         (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-                SearchView searchView =
-                        (SearchView) menu.findItem(R.id.search).getActionView();
-                searchView.setSearchableInfo(
-                        searchManager.getSearchableInfo(getComponentName()));
-                searchView.setIconifiedByDefault(false);
+                if (menuItem != null) {
+                    searchView = (SearchView) menuItem.getActionView();
+                    if (searchView != null)
+                        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+                }
+            } else {
+                searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+            }
+
+            if (searchView != null) {
+                searchView.setIconifiedByDefault(true);
+                searchView.setOnQueryTextListener(this);
             }
 
             restoreActionBar();
@@ -275,5 +288,19 @@ public class MainActivity extends SpiceActionBarActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        Intent i = new Intent(this, SearchActivity.class);
+        i.setAction(Intent.ACTION_SEARCH);
+        i.putExtra(SearchManager.QUERY, s);
+        startActivity(i);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 }

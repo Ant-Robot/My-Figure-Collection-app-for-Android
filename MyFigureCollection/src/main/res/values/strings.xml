@@ -38,5 +38,7 @@
     <string name="search_hint">Search a figure on My Figure Collection</string>
     <string name="title_activity_search">Search Figure</string>
     <string name="hello_world">Hello world!</string>
+    <string name="Wishability">Wishability</string>
+    <string name="search_failed">Search failed</string>
 
 </resources>

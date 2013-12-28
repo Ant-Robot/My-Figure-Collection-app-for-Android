@@ -24,7 +24,9 @@ import net.myfigurecollection.activity.MainActivity;
 import net.myfigurecollection.adapter.MFCListAdapter;
 import net.myfigurecollection.api.CollectionMode;
 import net.myfigurecollection.api.Item;
+import net.myfigurecollection.api.SearchMode;
 import net.myfigurecollection.api.request.CollectionRequest;
+import net.myfigurecollection.api.request.SearchRequest;
 import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.lang.reflect.Type;
@@ -45,6 +47,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String ARG_ROOT_NUMBER = "root_number";
+    private static final String ARG_SEARCH = "search";
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private final Type type_list_item = new TypeToken<List<Item>>() {
     }.getType();
@@ -52,6 +56,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
+    private int currentRoot = 0;
 
 
     public CollectionFragment() {
@@ -65,6 +70,16 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putInt(ARG_ROOT_NUMBER, 0);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static CollectionFragment newInstance(String search) {
+        CollectionFragment fragment = new CollectionFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, 9);
+        args.putString(ARG_SEARCH, search);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,7 +100,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-       mList = (StickyListHeadersListView) getActivity().findViewById(android.R.id.list);
+        mList = (StickyListHeadersListView) getActivity().findViewById(android.R.id.list);
 
         String stringitems = null;
         if (savedInstanceState != null) stringitems = savedInstanceState.getString("items");
@@ -104,10 +119,43 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
         if (user != null) {
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(true);
+            CollectionFragment.this.getActivity().setProgressBarIndeterminate(true);
 
 
-            CollectionRequest request = new CollectionRequest(user, currentPage + "", (getArguments().getInt(ARG_SECTION_NUMBER)) + "", "0");
-            spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
+            final int section = getArguments().getInt(ARG_SECTION_NUMBER);
+
+            if (section == 9) {
+                SearchRequest request = new SearchRequest(getArguments().getString(ARG_SEARCH));
+                spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, new RequestListener<SearchMode>() {
+                    @Override
+                    public void onRequestFailure(SpiceException e) {
+                        CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+                        CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
+                        Toast.makeText(getActivity(),getActivity().getString(R.string.search_failed),Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onRequestSuccess(SearchMode collectionMode) {
+
+
+                        items = collectionMode.getItem();
+                        Collections.sort(items);
+                        CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+                        CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
+                        mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+                        mList.setOnItemClickListener(CollectionFragment.this);
+
+
+                        PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString("status_search", gson.toJson(items, type_list_item)).commit();
+                        PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong("status_search_date", new Date().getTime()).commit();
+                    }
+
+                }
+                );
+            } else {
+                CollectionRequest request = new CollectionRequest(user, currentPage + "", section + "", currentRoot+"");
+                spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
+            }
         }
     }
 
@@ -131,16 +179,19 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
+        final int section = getArguments().getInt(ARG_SECTION_NUMBER);
+
+        if (section < 9)
+            ((MainActivity) activity).onSectionAttached(
+                    section);
     }
 
     @Override
     public void onRequestFailure(SpiceException e) {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
         getActivity().setProgressBarIndeterminateVisibility(false);
+        getActivity().setProgressBarIndeterminate(false);
 
-        CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
 
         String status = "status_na";
         switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
@@ -153,6 +204,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             case 2:
                 status = CollectionRequest.COLLECTION_STATUS_OWNED;
                 break;
+            default:
+                status = SearchRequest.MODE;
         }
 
         items = gson.fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).getString(status, ""), type_list_item);
@@ -167,7 +220,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         String max = "1";
         String status = "status_na", last = "status_na_date";
 
-        if (currentPage == 1) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
+        if (items==null && currentPage == 1 && currentRoot==0) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 items = collectionMode.getCollection().getWished().getItem();
                 max = collectionMode.getCollection().getWished().getNum_pages();
@@ -213,8 +266,16 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             getCollection();
 
         } else {
+            if (currentRoot<2)
+            {
+                currentPage = 1;
+                currentRoot++;
+                getCollection();
+            }
+
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+            CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
             mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
             mList.setOnItemClickListener(this);
 
@@ -224,8 +285,6 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         }
 
     }
-
-
 
     @Override
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
