@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -50,6 +51,8 @@ public class MainActivity extends SpiceActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    public int currentStatus;
+    private FragmentTabHost mTabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,10 @@ public class MainActivity extends SpiceActionBarActivity
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         //supportRequestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
+
+        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -77,6 +84,25 @@ public class MainActivity extends SpiceActionBarActivity
         checkCookie();
 
 
+
+    }
+
+    private void initView(int sectionNumber) {
+
+        mTabHost.clearAllTabs();
+        Bundle args0 = new Bundle();
+        args0.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
+        args0.putInt(CollectionFragment.ARG_ROOT_NUMBER, 0);
+        Bundle args1 = new Bundle();
+        args1.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
+        args1.putInt(CollectionFragment.ARG_ROOT_NUMBER, 1);
+        Bundle args2 = new Bundle();
+        args2.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
+        args2.putInt(CollectionFragment.ARG_ROOT_NUMBER, 2);
+
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section0)).setIndicator(getString(R.string.title_root_section0)), CollectionFragment.class, args0);
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section1)).setIndicator(getString(R.string.title_root_section1)), CollectionFragment.class, args1);
+        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section2)).setIndicator(getString(R.string.title_root_section2)), CollectionFragment.class, args2);
     }
 
     @SuppressWarnings("deprecation")
@@ -176,10 +202,16 @@ public class MainActivity extends SpiceActionBarActivity
     private void getGallery(String user) {
 
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+
+       /* FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, GalleryFragment.newInstance(user))
-                .commit();
+                .commit();*/
+
+        Bundle args = new Bundle();
+        args.putString(GalleryFragment.ARG_PARAM1, user);
+
+        mTabHost.addTab(mTabHost.newTabSpec("gallery"+user).setIndicator(user), GalleryFragment.class, args);
     }
 
     @Override
@@ -200,10 +232,12 @@ public class MainActivity extends SpiceActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        /*FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, CollectionFragment.newInstance(position - 1))
-                .commit();
+                .replace(R.id.container, CollectionFragment.newInstance(position - 1,0))
+                .commit();*/
+
+        initView(position-1);
     }
 
     public void onSectionAttached(int number) {
@@ -218,6 +252,7 @@ public class MainActivity extends SpiceActionBarActivity
                 mTitle = getString(R.string.title_section3);
                 break;
         }
+        currentStatus = number+1;
     }
 
     public void restoreActionBar() {

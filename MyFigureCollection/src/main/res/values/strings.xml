@@ -40,5 +40,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="Wishability">Wishability</string>
     <string name="search_failed">Search failed</string>
+    <string name="title_root_section0">Figures</string>
+    <string name="title_root_section1">Goods</string>
+    <string name="title_root_section2">Media</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -46,8 +46,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String ARG_ROOT_NUMBER = "root_number";
+    public static final String ARG_SECTION_NUMBER = "section_number";
+    public static final String ARG_ROOT_NUMBER = "root_number";
     private static final String ARG_SEARCH = "search";
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private final Type type_list_item = new TypeToken<List<Item>>() {
@@ -66,11 +66,11 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CollectionFragment newInstance(int sectionNumber) {
+    public static CollectionFragment newInstance(int sectionNumber, int rootNumber) {
         CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putInt(ARG_ROOT_NUMBER, 0);
+        args.putInt(ARG_ROOT_NUMBER, rootNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -123,6 +123,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
 
             final int section = getArguments().getInt(ARG_SECTION_NUMBER);
+            final int root = getArguments().getInt(ARG_ROOT_NUMBER);
 
             if (section == 9) {
                 SearchRequest request = new SearchRequest(getArguments().getString(ARG_SEARCH));
@@ -153,7 +154,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
                 }
                 );
             } else {
-                CollectionRequest request = new CollectionRequest(user, currentPage + "", section + "", currentRoot+"");
+                CollectionRequest request = new CollectionRequest(user, currentPage + "", section + "", root+"");
                 spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
             }
         }
@@ -266,12 +267,12 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             getCollection();
 
         } else {
-            if (currentRoot<2)
+            /*if (currentRoot<2)
             {
                 currentPage = 1;
                 currentRoot++;
                 getCollection();
-            }
+            }*/
 
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);

@@ -58,7 +58,7 @@ import java.util.List;
 public class GalleryFragment extends SpiceFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "current gallery";
+    public static final String ARG_PARAM1 = "current gallery";
     private static final String ARG_PARAM2 = "type gallery";
     private Animator mCurrentAnimator;
     private int mShortAnimationDuration;
