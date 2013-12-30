@@ -96,11 +96,14 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         super.onStop();
     }
 
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        //super.onViewCreated(view, savedInstanceState);
 
-        mList = (StickyListHeadersListView) getActivity().findViewById(android.R.id.list);
+
+
 
         String stringitems = null;
         if (savedInstanceState != null) stringitems = savedInstanceState.getString("items");
@@ -174,7 +177,11 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        mList = (StickyListHeadersListView) rootView.findViewById(android.R.id.list);
+        return rootView;
     }
 
     @Override
@@ -197,13 +204,13 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         String status = "status_na";
         switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
-                status = CollectionRequest.COLLECTION_STATUS_WISHED;
+                status = CollectionRequest.COLLECTION_STATUS_WISHED+currentRoot;
                 break;
             case 1:
-                status = CollectionRequest.COLLECTION_STATUS_ORDERED;
+                status = CollectionRequest.COLLECTION_STATUS_ORDERED+currentRoot;
                 break;
             case 2:
-                status = CollectionRequest.COLLECTION_STATUS_OWNED;
+                status = CollectionRequest.COLLECTION_STATUS_OWNED+currentRoot;
                 break;
             default:
                 status = SearchRequest.MODE;
@@ -221,7 +228,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         String max = "1";
         String status = "status_na", last = "status_na_date";
 
-        if (items==null && currentPage == 1 && currentRoot==0) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
+        if (items==null || currentPage == 1) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 items = collectionMode.getCollection().getWished().getItem();
                 max = collectionMode.getCollection().getWished().getNum_pages();
@@ -274,6 +281,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
                 getCollection();
             }*/
 
+            currentPage=1;
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
             CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
@@ -281,8 +289,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             mList.setOnItemClickListener(this);
 
 
-            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status, gson.toJson(items, type_list_item)).commit();
-            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong(last, new Date().getTime()).commit();
+            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status+currentRoot, gson.toJson(items, type_list_item)).commit();
+            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong(last+currentRoot, new Date().getTime()).commit();
         }
 
     }
@@ -299,5 +307,10 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         itemView.putExtras(b);
         startActivity(itemView);
 
+    }
+
+    public void update(int mStatus) {
+        getArguments().putInt(ARG_SECTION_NUMBER, mStatus);
+        getCollection();
     }
 }

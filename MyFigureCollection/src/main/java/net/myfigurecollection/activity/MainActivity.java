@@ -16,7 +16,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -28,6 +30,9 @@ import net.myfigurecollection.R;
 import net.myfigurecollection.activity.fragment.CollectionFragment;
 import net.myfigurecollection.activity.fragment.GalleryFragment;
 import net.myfigurecollection.activity.fragment.NavigationDrawerFragment;
+import net.myfigurecollection.activity.fragment.RootFragment;
+import net.myfigurecollection.adapter.CollectionSectionsPagerAdapter;
+import net.myfigurecollection.api.Root;
 import net.myfigurecollection.authentication.AccountGeneral;
 import net.myfigurecollection.widgets.SpiceActionBarActivity;
 
@@ -38,7 +43,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends SpiceActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener, SearchView.OnQueryTextListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, GalleryFragment.OnFragmentInteractionListener, SearchView.OnQueryTextListener, ViewPager.OnPageChangeListener {
 
     final MainActivity cbt = this;
     private final Handler handler = new Handler();
@@ -52,7 +57,9 @@ public class MainActivity extends SpiceActionBarActivity
      */
     private CharSequence mTitle;
     public int currentStatus;
-    private FragmentTabHost mTabHost;
+    private ActionBar actionBar;
+    private CollectionSectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +68,11 @@ public class MainActivity extends SpiceActionBarActivity
         //supportRequestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
 
-        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+        // Set up the action bar.
+        actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+
 
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -76,33 +86,72 @@ public class MainActivity extends SpiceActionBarActivity
 
         String user = PreferenceManager.getDefaultSharedPreferences(this).getString("user", null);
 
-        if (user != null && getSupportFragmentManager().getFragments().size() <= 1) {
+        /*if (user != null && getSupportFragmentManager().getFragments().size() <= 1) {
             getGallery(user);
-        }
+        }*/
 
 
         checkCookie();
 
+        mSectionsPagerAdapter = new CollectionSectionsPagerAdapter(this,0, getSupportFragmentManager());
 
 
-    }
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-    private void initView(int sectionNumber) {
 
-        mTabHost.clearAllTabs();
-        Bundle args0 = new Bundle();
-        args0.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
-        args0.putInt(CollectionFragment.ARG_ROOT_NUMBER, 0);
-        Bundle args1 = new Bundle();
-        args1.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
-        args1.putInt(CollectionFragment.ARG_ROOT_NUMBER, 1);
-        Bundle args2 = new Bundle();
-        args2.putInt(CollectionFragment.ARG_SECTION_NUMBER, sectionNumber);
-        args2.putInt(CollectionFragment.ARG_ROOT_NUMBER, 2);
+        // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+        mViewPager.setOnPageChangeListener(this);
 
-        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section0)).setIndicator(getString(R.string.title_root_section0)), CollectionFragment.class, args0);
-        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section1)).setIndicator(getString(R.string.title_root_section1)), CollectionFragment.class, args1);
-        mTabHost.addTab(mTabHost.newTabSpec(getString(R.string.title_root_section2)).setIndicator(getString(R.string.title_root_section2)), CollectionFragment.class, args2);
+
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < 3; i++) {
+
+            String title = null;
+
+            Locale l = Locale.getDefault();
+            switch (i) {
+                case 0:
+                    title = getString(R.string.title_root_section0).toUpperCase(l);
+                    break;
+                case 1:
+                    title = getString(R.string.title_root_section1).toUpperCase(l);
+                    break;
+                case 2:
+                    title = getString(R.string.title_root_section2).toUpperCase(l);
+                    break;
+            }
+            // Create a tab with text corresponding to the page title defined by
+            // the adapter. Also specify this Activity object, which implements
+            // the TabListener interface, as the callback (listener) for when
+            // this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(title)
+                            .setTabListener(new ActionBar.TabListener() {
+                                @Override
+                                public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+                                    if (mViewPager!=null)
+                                        mViewPager.setCurrentItem(tab.getPosition());
+                                }
+
+                                @Override
+                                public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+                                }
+
+                                @Override
+                                public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+                                }
+                            }));
+        }
+
+
+
     }
 
     @SuppressWarnings("deprecation")
@@ -201,17 +250,14 @@ public class MainActivity extends SpiceActionBarActivity
 
     private void getGallery(String user) {
 
+        actionBar.removeAllTabs();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-
-       /* FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, GalleryFragment.newInstance(user))
-                .commit();*/
+                .commit();
 
-        Bundle args = new Bundle();
-        args.putString(GalleryFragment.ARG_PARAM1, user);
-
-        mTabHost.addTab(mTabHost.newTabSpec("gallery"+user).setIndicator(user), GalleryFragment.class, args);
     }
 
     @Override
@@ -231,13 +277,15 @@ public class MainActivity extends SpiceActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        /*FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, CollectionFragment.newInstance(position - 1,0))
-                .commit();*/
 
-        initView(position-1);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // update the main content by replacing fragments
+
+        mSectionsPagerAdapter.setStatus(position);
+
+
+
+
     }
 
     public void onSectionAttached(int number) {
@@ -257,7 +305,7 @@ public class MainActivity extends SpiceActionBarActivity
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
 
@@ -338,4 +386,20 @@ public class MainActivity extends SpiceActionBarActivity
     public boolean onQueryTextChange(String s) {
         return false;
     }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+
+    }
+
+    @Override
+        public void onPageSelected(int position) {
+            actionBar.setSelectedNavigationItem(position);
+        }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
+    }
+
 }
