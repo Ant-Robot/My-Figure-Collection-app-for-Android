@@ -28,6 +28,7 @@ import net.myfigurecollection.api.SearchMode;
 import net.myfigurecollection.api.request.CollectionRequest;
 import net.myfigurecollection.api.request.SearchRequest;
 import net.myfigurecollection.widgets.SpiceFragment;
+import net.myfigurecollection.widgets.StickyListViewPullable;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -35,11 +36,15 @@ import java.util.Date;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.AbsListViewDelegate;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CollectionFragment extends SpiceFragment implements RequestListener<CollectionMode>, AdapterView.OnItemClickListener {
+public class CollectionFragment extends SpiceFragment implements RequestListener<CollectionMode>, AdapterView.OnItemClickListener, OnRefreshListener {
 
 
     /**
@@ -52,11 +57,12 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private final Type type_list_item = new TypeToken<List<Item>>() {
     }.getType();
-    private StickyListHeadersListView mList;
+    private StickyListViewPullable mList;
     private OkHttpBitmapSpiceManager spiceManagerBinary = new OkHttpBitmapSpiceManager();
     private List<Item> items;
     private int currentPage = 1;
     private int currentRoot = 0;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
 
     public CollectionFragment() {
@@ -126,7 +132,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
 
             final int section = getArguments().getInt(ARG_SECTION_NUMBER);
-            final int root = getArguments().getInt(ARG_ROOT_NUMBER);
+            final int root = currentRoot;// getArguments().getInt(ARG_ROOT_NUMBER);
 
             if (section == 9) {
                 SearchRequest request = new SearchRequest(getArguments().getString(ARG_SEARCH));
@@ -134,6 +140,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
                     @Override
                     public void onRequestFailure(SpiceException e) {
                         CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+                        mPullToRefreshLayout.setRefreshComplete();
                         CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
                         Toast.makeText(getActivity(),getActivity().getString(R.string.search_failed),Toast.LENGTH_LONG);
                     }
@@ -145,6 +152,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
                         items = collectionMode.getItem();
                         Collections.sort(items);
                         CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+                        mPullToRefreshLayout.setRefreshComplete();
                         CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
                         mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
                         mList.setOnItemClickListener(CollectionFragment.this);
@@ -180,7 +188,18 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mList = (StickyListHeadersListView) rootView.findViewById(android.R.id.list);
+        mPullToRefreshLayout = (PullToRefreshLayout) rootView.findViewById(R.id.ptr_layout);
+        mList = (StickyListViewPullable) rootView.findViewById(android.R.id.list);
+
+        ActionBarPullToRefresh.from(this.getActivity())
+                .useViewDelegate(StickyListViewPullable.class, mList)
+                // Mark All Children as pullable
+                .allChildrenArePullable()
+                        // Set the OnRefreshListener
+                .listener(this)
+                        // Finally commit the setup to our PullToRefreshLayout
+                .setup(mPullToRefreshLayout);
+
         return rootView;
     }
 
@@ -198,6 +217,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
     public void onRequestFailure(SpiceException e) {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.request_error, e.getMessage()), Toast.LENGTH_LONG).show();
         getActivity().setProgressBarIndeterminateVisibility(false);
+        mPullToRefreshLayout.setRefreshComplete();
         getActivity().setProgressBarIndeterminate(false);
 
 
@@ -228,7 +248,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         String max = "1";
         String status = "status_na", last = "status_na_date";
 
-        if (items==null || currentPage == 1) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
+        if (items==null && currentPage == 1) switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 items = collectionMode.getCollection().getWished().getItem();
                 max = collectionMode.getCollection().getWished().getNum_pages();
@@ -274,16 +294,17 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             getCollection();
 
         } else {
-            /*if (currentRoot<2)
+            if (currentRoot<2)
             {
                 currentPage = 1;
                 currentRoot++;
                 getCollection();
-            }*/
+            }
 
             currentPage=1;
             Collections.sort(items);
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
+            mPullToRefreshLayout.setRefreshComplete();
             CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
             mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
             mList.setOnItemClickListener(this);
@@ -311,6 +332,14 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
     public void update(int mStatus) {
         getArguments().putInt(ARG_SECTION_NUMBER, mStatus);
+        getCollection();
+    }
+
+    @Override
+    public void onRefreshStarted(View view) {
+        currentPage = 1;
+        currentRoot = 0;
+        items = null;
         getCollection();
     }
 }

@@ -27,6 +27,21 @@ android {
         minSdkVersion 9
         targetSdkVersion 19
     }
+
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "yr4veak"
+            keyAlias "climbatize"
+            keyPassword "yr4veak"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 dependencies {
@@ -42,8 +57,7 @@ dependencies {
     compile 'com.tonicartos:stickygridheaders:1.0.+'
     compile 'se.emilsjolander:stickylistheaders:2.1.+'
     compile 'javax.annotation:javax.annotation-api:1.2-b03'
-    
-    
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:+'
     compile 'com.google.http-client:google-http-client:1.17.0-rc'
     compile 'com.google.http-client:google-http-client-android:1.17.0-rc'
     compile ('com.google.http-client:google-http-client-gson:1.17.0-rc')
