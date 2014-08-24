@@ -35,11 +35,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.AbsListViewDelegate;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -166,7 +165,7 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
                 );
             } else {
                 CollectionRequest request = new CollectionRequest(user, currentPage + "", section + "", root+"");
-                spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_HOUR, this);
+                spiceManager.execute(request, request.createCacheKey(), DurationInMillis.ONE_MINUTE*5, this);
             }
         }
     }
@@ -221,7 +220,8 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
         getActivity().setProgressBarIndeterminate(false);
 
 
-        String status = "status_na";
+        String status;
+
         switch (getArguments().getInt(ARG_SECTION_NUMBER, 1)) {
             case 0:
                 status = CollectionRequest.COLLECTION_STATUS_WISHED+currentRoot;
@@ -238,7 +238,10 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
 
         items = gson.fromJson(PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).getString(status, ""), type_list_item);
 
-        mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+        if (items!=null)
+        {
+            mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+        }
         mList.setOnItemClickListener(this);
     }
 
@@ -306,13 +309,18 @@ public class CollectionFragment extends SpiceFragment implements RequestListener
             CollectionFragment.this.getActivity().setProgressBarIndeterminateVisibility(false);
             mPullToRefreshLayout.setRefreshComplete();
             CollectionFragment.this.getActivity().setProgressBarIndeterminate(false);
-            mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
-            mList.setOnItemClickListener(this);
+
+            if (items!=null) {
+                mList.setAdapter(new MFCListAdapter(getActivity(), spiceManagerBinary, items, R.layout.header));
+                mList.setOnItemClickListener(this);
+                PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status+currentRoot, gson.toJson(items, type_list_item)).commit();
+                PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong(last+currentRoot, new Date().getTime()).commit();
 
 
-            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putString(status+currentRoot, gson.toJson(items, type_list_item)).commit();
-            PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext()).edit().putLong(last+currentRoot, new Date().getTime()).commit();
-        }
+            }
+
+
+            }
 
     }
 

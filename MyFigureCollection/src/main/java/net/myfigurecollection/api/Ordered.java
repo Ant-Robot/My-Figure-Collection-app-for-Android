@@ -59,6 +59,13 @@ public class Ordered {
         this.item = item;
     }
 
+    public void setItem(Item item)
+    {
+        List<Item> list = new ArrayList<Item>();
+        list.add(item);
+        setItem(list);
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

@@ -7,9 +7,17 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.octo.android.robospice.request.googlehttpclient.GoogleHttpClientSpiceRequest;
 
 import net.myfigurecollection.api.CollectionMode;
+import net.myfigurecollection.api.Item;
+import net.myfigurecollection.api.adapter.ItemAdapter;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import hugo.weaving.DebugLog;
 
@@ -56,11 +64,15 @@ public class CollectionRequest extends GoogleHttpClientSpiceRequest<CollectionMo
         HttpRequestFactory requestFactory = getHttpRequestFactory();
         GenericUrl gUrl = new GenericUrl(url);
         request = requestFactory.buildGetRequest(gUrl);
-        request.setParser(new GsonFactory().createJsonObjectParser());
-        HttpResponse response = request.execute();
+
+        Type itemListType = new TypeToken<List<Item>>() {}.getType();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(itemListType, new ItemAdapter())
+                .create();
 
 
-        return response.parseAs(getResultType());
+        return gson.fromJson(request.execute().parseAsString(),getResultType());
     }
 
     /**
