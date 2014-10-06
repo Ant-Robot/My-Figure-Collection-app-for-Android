@@ -1,0 +1,8 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store
+.idea/libraries
+MyFigureCollection.iml
+misc.xml
+MyFigureCollection/release.keystore

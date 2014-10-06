@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">My Figure Collection</string>
+    <string name="title_section1">Wished</string>
+    <string name="title_section2">Ordered</string>
+    <string name="title_section3">Owned</string>
+    <string name="title_item_section1">Gallery</string>
+    <string name="title_item_section2">View on MFC</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Delete</string>
+    <string name="action_settings">Settings</string>
+    <string name="signup_title">Create new account</string>
+    <string name="login_label">Log in</string>
+    <string name="account_login">Login</string>
+    <string name="account_password">Password</string>
+    <string name="account_signin">Sign in</string>
+    <string name="account_new">New user?</string>
+    <string name="main_choose">☚ Choose a category here</string>
+    <string name="title_activity_item">Item details</string>
+    <string name="description_zoom_touch_close">Expanded image (touch to close)</string>
+    <string name="tsukotan">Tsuko-tan</string>
+    <string name="mfc_figure_pics_thumb_root">http://myfigurecollection.net/pics/figure/%s.jpg</string>
+    <string name="mfc_figure_pics_big_root">http://myfigurecollection.net/pics/figure/big/%s.jpg</string>
+    <string name="mfc_cache_thumbs_item">FIGURE_%s_THUMB.jpg</string>
+    <string name="mfc_cache_pic_item">FIGURE_%s.jpg</string>
+    <string name="mfc_cache_thumbs_gallery">GALLERY_%s_THUMB.jpg</string>
+    <string name="mfc_cache_pic_gallery">GALLERY_%s.jpg</string>
+    <string name="title_item_section0">Item</string>
+    <string name="wishability">Wishability</string>
+    <string name="Score">Score</string>
+    <string name="release_date">Release Date</string>
+    <string name="jan">Barcode</string>
+    <string name="isbn">ISBN</string>
+    <string name="request_error">Error during request: %s</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search a figure on My Figure Collection</string>
+    <string name="title_activity_search">Search Figure</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Wishability">Wishability</string>
+    <string name="search_failed">Search failed</string>
+    <string name="title_root_section0">Figures</string>
+    <string name="title_root_section1">Goods</string>
+    <string name="title_root_section2">Media</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

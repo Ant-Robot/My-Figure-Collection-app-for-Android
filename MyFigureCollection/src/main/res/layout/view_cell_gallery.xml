@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.GalleryView"
+        android:clickable="false"
+        android:padding="4dp">
+
+
+    <ImageView
+            android:id="@+id/octo_thumbnail_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription=""
+            android:padding="4dp"
+            android:clickable="false"
+            android:cropToPadding="true"
+            android:adjustViewBounds="false"
+            android:src="@drawable/no250"/>
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageViewNsfw"
+            android:layout_gravity="center"
+            android:src="@drawable/selector_nsfw"
+            android:scaleType="fitXY"
+            android:padding="4dp"
+            android:clickable="false"
+            android:cropToPadding="true"/>
+</FrameLayout>
+
+
+
+
+

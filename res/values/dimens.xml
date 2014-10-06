@@ -1,11 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="thumbnail_size">50dp</dimen>
-    <dimen name="thumbnail_radius">5dp</dimen>
-    <dimen name="frag_rounding_radius">5dp</dimen>
-    <dimen name="progress_action_padding">8dp</dimen>
-    <dimen name="list_padding">3dp</dimen>
-    <dimen name="left_width_landscape">85dp</dimen>
-    <dimen name="left_width_portrait">85dp</dimen>
-</resources>

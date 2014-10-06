@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <item name="isLarge" format="boolean" type="bool">true</item>
-
-    <dimen name="left_width_portrait">85dp</dimen>
-    <dimen name="left_width_landscape">320dp</dimen>
-
-</resources>
