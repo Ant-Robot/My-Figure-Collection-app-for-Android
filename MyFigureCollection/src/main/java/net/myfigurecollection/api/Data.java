@@ -17,6 +17,8 @@ public class Data {
     @Key @Expose
     private String isbn;
     @Key @Expose
+    private String barcode;
+    @Key @Expose
     private String catalog;
     @Key @Expose
     private String name;
@@ -43,6 +45,13 @@ public class Data {
 
     public String getIsbn() {
         return isbn;
+    }
+    public void setBarcode(String jan) {
+        this.barcode = jan;
+    }
+
+    public String getBarcode() {
+        return barcode;
     }
 
     public void setIsbn(String isbn) {

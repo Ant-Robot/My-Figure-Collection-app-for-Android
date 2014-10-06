@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,8 @@ import net.myfigurecollection.widgets.SpiceFragment;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.util.Locale;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -99,12 +102,44 @@ public class ItemFragment extends SpiceFragment {
             itemView.update(item);
             final ImageView iv = (ImageView) itemView.findViewById(R.id.octo_thumbnail_imageview);
             final RatingBar stars = (RatingBar) rootView.findViewById(R.id.ratingBar);
+            stars.setEnabled(false);
             if (item.getMycollection()!=null){
                 if ("-1".equalsIgnoreCase(item.getMycollection().getScore())){
                     stars.setRating(Float.parseFloat(item.getMycollection().getWishability()) / 2.0f);
                     ((TextView)rootView.findViewById(R.id.layout_rating).findViewById(R.id.title)).setText(getString(R.string.Wishability));
                 }
                 else stars.setRating(Float.parseFloat(item.getMycollection().getScore()) / 2.0f);
+            }
+
+            final LinearLayout layoutDate = (LinearLayout) rootView.findViewById(R.id.layout_date);
+
+            if (item.getDate()!=null)
+            {
+                DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault());
+                ((TextView)layoutDate.findViewById(R.id.label)).setText(df.format(item.getDate()));
+            }else
+            {
+                layoutDate.setVisibility(View.GONE);
+            }
+
+            final LinearLayout layoutJan = (LinearLayout) rootView.findViewById(R.id.layout_jan);
+
+            if (item.getData().getBarcode()!=null)
+            {
+                ((TextView)layoutJan.findViewById(R.id.label)).setText(item.getData().getBarcode());
+            }else
+            {
+                layoutJan.setVisibility(View.GONE);
+            }
+
+            final LinearLayout layoutIsbn = (LinearLayout) rootView.findViewById(R.id.layout_isbn);
+
+            if (item.getData().getIsbn()!=null)
+            {
+                ((TextView)layoutJan.findViewById(R.id.label)).setText(item.getData().getIsbn());
+            }else
+            {
+                layoutIsbn.setVisibility(View.GONE);
             }
 
             ViewTreeObserver vto = iv.getViewTreeObserver();
@@ -220,7 +255,8 @@ public class ItemFragment extends SpiceFragment {
         boolean ret = false;
         ItemRequest request = new ItemRequest(this.item, getActivity());
 
-        switch (id) {
+        //TODO: menu
+        /*switch (id) {
             case R.id.action_delete:
                 request.remove(this.item.getMycollection().getNumber());
                 ret = true;
@@ -234,7 +270,7 @@ public class ItemFragment extends SpiceFragment {
             case R.id.action_wished:
                 ret = true;
                 break;
-        }
+        }*/
 
         spiceManager.execute(request, new RequestListener<StatusAnswer>() {
             @Override

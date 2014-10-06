@@ -31,7 +31,7 @@
     <string name="wishability">Wishability</string>
     <string name="Score">Score</string>
     <string name="release_date">Release Date</string>
-    <string name="jan">JAN</string>
+    <string name="jan">Barcode</string>
     <string name="isbn">ISBN</string>
     <string name="request_error">Error during request: %s</string>
     <string name="search_title">Search</string>

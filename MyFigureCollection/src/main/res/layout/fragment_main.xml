@@ -15,9 +15,10 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fastScrollAlwaysVisible="true"
         android:fastScrollEnabled="true"
-        android:headerDividersEnabled="false">
+        android:headerDividersEnabled="false"
+        android:dividerHeight="0dp"
+        android:divider="@null">
 
     </net.myfigurecollection.widgets.StickyListViewPullable>
 </uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout>

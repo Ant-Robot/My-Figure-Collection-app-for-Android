@@ -14,6 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="false"
         android:layout_alignParentStart="false"
         android:minHeight="70dp" />
 
@@ -25,6 +26,7 @@
         android:contentDescription=""
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/view_category"
+        android:layout_toEndOf="@+id/view_category"
         android:layout_margin="5dp"/>
 
     <TextView
@@ -35,6 +37,7 @@
         android:textStyle="bold"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/picto"
+        android:layout_toEndOf="@+id/picto"
         android:singleLine="false"/>
 
 

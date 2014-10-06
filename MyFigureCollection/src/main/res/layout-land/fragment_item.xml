@@ -22,9 +22,11 @@
             android:layout_gravity="center"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/ratingBar"
+            android:layout_toEndOf="@+id/ratingBar"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="false"
             android:layout_alignParentStart="false"
+            android:layout_alignParentLeft="false"
             android:id="@+id/picLayout">
 
             <ImageView
@@ -32,8 +34,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentStart="false"
                 android:scaleType="fitCenter" />
 
             <ImageView
@@ -53,19 +53,22 @@
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/picLayout" />
+            android:layout_toLeftOf="@+id/picLayout"
+            android:layout_toStartOf="@+id/picLayout"
+            />
 
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@+id/infos"
-            android:layout_toLeftOf="@+id/picLayout">
+            android:layout_toLeftOf="@+id/picLayout"
+            android:layout_toStartOf="@+id/picLayout"
+            >
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:id="@+id/linearLayout3">
 
                 <LinearLayout

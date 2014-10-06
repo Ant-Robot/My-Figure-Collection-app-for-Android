@@ -17,8 +17,6 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:contentDescription=""
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:padding="4dp"
             android:clickable="false"
             android:cropToPadding="true"

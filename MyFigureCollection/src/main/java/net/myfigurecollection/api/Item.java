@@ -81,10 +81,13 @@ public class Item implements Comparable<Item> {
     public Date getDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date d = null;
-        try {
-            d = sdf.parse(getData().getRelease_date());
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+        if (getData().getRelease_date()!=null) {
+            try {
+                d = sdf.parse(getData().getRelease_date());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return d;
 

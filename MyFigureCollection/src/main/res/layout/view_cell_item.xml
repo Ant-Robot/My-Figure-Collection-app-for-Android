@@ -2,19 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/thumbsize"
-    tools:context=".view.ItemView">
+    android:layout_height="wrap_content"
+    tools:context=".view.ItemView"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    android:background="#afff">
 
     <View
         android:layout_width="10dp"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/thumbsize"
         android:id="@+id/view_category"
         android:background="#000"
         android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
+        android:layout_alignParentRight="false"
         android:minHeight="@dimen/thumbsize" />
 
     <ImageView
@@ -26,15 +32,19 @@
         android:background="@android:drawable/picture_frame"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:src="@drawable/no250"/>
 
     <TextView
         android:id="@+id/item_name_textview"
         style="@android:style/TextAppearance.Medium"
+        android:paddingTop="3dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/octo_thumbnail_imageview"
+        android:layout_toEndOf="@id/octo_thumbnail_imageview"
         android:layout_alignParentTop="true"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -47,7 +57,9 @@
         android:textSize="12sp"
         android:textStyle="italic"
         android:layout_below="@+id/item_name_textview"
-        android:layout_toRightOf="@+id/octo_thumbnail_imageview" />
+        android:layout_toRightOf="@+id/octo_thumbnail_imageview"
+        android:layout_toEndOf="@+id/octo_thumbnail_imageview"
+        />
 
 
 </RelativeLayout>

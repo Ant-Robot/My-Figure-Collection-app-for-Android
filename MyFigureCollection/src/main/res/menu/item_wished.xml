@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity" >
-    <item android:id="@+id/action_order"
+    <!--item android:id="@+id/action_order"
           android:icon="@drawable/ic_action_ordered"
           android:title="@string/title_section2"
           app:showAsAction="withText|ifRoom" />
@@ -14,5 +14,5 @@
         android:icon="@drawable/ic_action_delete"
         android:title="@string/action_example"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="never" /-->
 </menu>

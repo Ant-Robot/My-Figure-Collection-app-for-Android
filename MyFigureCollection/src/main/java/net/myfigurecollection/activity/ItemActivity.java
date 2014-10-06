@@ -36,6 +36,12 @@ public class ItemActivity extends ActionBarActivity implements ActionBar.TabList
     ViewPager mViewPager;
     public String stringItem;
     public Item item;
+    String[] ret = new String[2];
+
+    public String[] decode (String message)
+    {
+        return new String[]{"test", "test"};
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

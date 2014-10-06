@@ -411,6 +411,12 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
                 public void onRequestSuccess(InputStream file) {
                     File tempFile = new File(getActivity().getExternalCacheDir(), "AVATAR_" + user.getPicture());
 
+                    try {
+                        tempFile.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     OutputStream out = null;
                     try {
                         out = new FileOutputStream(tempFile);
@@ -426,6 +432,9 @@ public class NavigationDrawerFragment extends SpiceFragment implements RequestLi
                         out.close();
                         file.close();
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (NullPointerException e)
+                    {
                         e.printStackTrace();
                     }
 
