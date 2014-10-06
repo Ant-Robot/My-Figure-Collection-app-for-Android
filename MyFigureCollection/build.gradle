@@ -3,28 +3,78 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
     }
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
+apply plugin: 'hugo'
 
 repositories {
     mavenCentral()
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.1.1"
+    compileSdkVersion 20
+    buildToolsVersion "20"
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
 
     defaultConfig {
+        applicationId "net.myfigurecollection"
         minSdkVersion 9
-        targetSdkVersion 19
+        targetSdkVersion 20
+        versionCode 11
+        versionName "Fate"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "yr4veak"
+            keyAlias "climbatize"
+            keyPassword "yr4veak"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError false
+    }
+
 }
 
 dependencies {
-	compile 'com.android.support:appcompat-v7:18.0.0'
-	compile 'com.android.support:support-v4:18.0.0'
-    compile 'com.google.code.gson:gson:2.2.4'
-
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:support-v4:+'
+    compile 'com.github.gabrielemariotti.cards:library:1.9.1'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'com.google.code.gson:gson:2.2.+'
+    compile 'com.squareup.okhttp:okhttp:1.2.+'
+    compile 'com.octo.android.robospice:robospice-google-http-client:1.4.+'
+    compile 'com.octo.android.robospice:robospice-ui-spicelist:1.4.+'
+    compile 'com.octo.android.robospice:robospice-cache:1.4.+'
+    compile 'com.octo.android.robospice:robospice-okhttp:1.4.+'
+    compile 'com.tonicartos:stickygridheaders:1.0.+'
+    compile 'se.emilsjolander:stickylistheaders:2.1.+'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:+'
+    compile 'com.google.http-client:google-http-client:1.19.+'
+    compile 'com.google.http-client:google-http-client-android:1.19.+'
+    compile ('com.google.http-client:google-http-client-gson:1.19.+')
+            {
+                exclude module: 'xpp3'
+                exclude module: 'stax-api'
+            }
+    compile ('com.octo.android.robospice:robospice:1.4.+')
 }
