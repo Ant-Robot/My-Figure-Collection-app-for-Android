@@ -1,4 +1,4 @@
-package net.myfigurecollection;
+package com.ant_robot.myfigurecollection;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
