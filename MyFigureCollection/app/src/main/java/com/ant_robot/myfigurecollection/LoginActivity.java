@@ -147,6 +147,9 @@ public class LoginActivity extends Activity {//implements LoaderCallbacks<Cursor
                     if (aBoolean && response.getBody().length()==0)
                     {
                         Log.d("MFC","login success : "+response.getBody().length());
+                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
                     }else
                     {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
