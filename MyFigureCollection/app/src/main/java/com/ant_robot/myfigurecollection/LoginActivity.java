@@ -3,12 +3,11 @@ package com.ant_robot.myfigurecollection;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import com.ant_robot.mfc.api.request.MFCRequest;
 import com.crashlytics.android.Crashlytics;
 
-
 import io.fabric.sdk.android.Fabric;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -32,7 +30,7 @@ import retrofit.client.Response;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity {//implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity {//implements LoaderCallbacks<Cursor> {
 
 
     // UI references.
@@ -41,12 +39,17 @@ public class LoginActivity extends Activity {//implements LoaderCallbacks<Cursor
     private View mProgressView;
     private View mLoginFormView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
         Fabric.with(this, new Crashlytics());
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setHomeButtonEnabled(true);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -144,14 +147,12 @@ public class LoginActivity extends Activity {//implements LoaderCallbacks<Cursor
 
                     showProgress(false);
 
-                    if (aBoolean && response.getBody().length()==0)
-                    {
-                        Log.d("MFC","login success : "+response.getBody().length());
+                    if (aBoolean && response.getBody().length() == 0) {
+                        Log.d("MFC", "login success : " + response.getBody().length());
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(i);
-                    }else
-                    {
+                    } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
                         mPasswordView.requestFocus();
                     }
@@ -159,13 +160,12 @@ public class LoginActivity extends Activity {//implements LoaderCallbacks<Cursor
 
                 @Override
                 public void failure(RetrofitError error) {
-                    Log.e("MFC","login failed");
+                    Log.e("MFC", "login failed");
                     showProgress(false);
                 }
             });
         }
     }
-
 
 
     /**

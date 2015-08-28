@@ -6,6 +6,17 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorButtonNormal">@color/primary_light</item>
+        <item name="android:colorBackground">@android:color/white</item>
     </style>
+
+    <style name="LoginTheme" parent="AppTheme"/>
+
+    <style name="MFCButton">
+        <item name="android:textColor">@color/primary_text</item>
+    </style>
+
+
+
 
 </resources>
