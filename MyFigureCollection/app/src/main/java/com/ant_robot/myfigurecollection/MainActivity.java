@@ -1,7 +1,9 @@
 package com.ant_robot.myfigurecollection;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -11,24 +13,27 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-import com.ant_robot.myfigurecollection.R;
+import com.ant_robot.mfc.api.pojo.Picture;
+import com.ant_robot.mfc.api.pojo.PictureGallery;
+import com.ant_robot.mfc.api.request.MFCRequest;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+
+public class MainActivity extends AppCompatActivity implements GalleryFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,10 +45,16 @@ public class MainActivity extends AppCompatActivity
     private CharSequence mTitle;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    List<Picture> pictures;
+    int currentIndex;
+    int currentSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState!=null)
+        currentSection = savedInstanceState.getInt("lastSection",-1);
 
         setContentView(R.layout.activity_main);
 
@@ -55,13 +66,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView view = (NavigationView) findViewById(R.id.navigation_view);
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override public boolean onNavigationItemSelected(MenuItem menuItem) {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
                 Snackbar.make(findViewById(R.id.container), menuItem.getTitle() + " pressed", Snackbar.LENGTH_LONG).show();
                 menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
+                currentSection = menuItem.getItemId();
+                executeRequest();
+
+
+
                 return true;
             }
         });
+
+
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
@@ -73,22 +92,135 @@ public class MainActivity extends AppCompatActivity
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
+
+                ActionBar actionBar = getSupportActionBar();
+
+                if (actionBar!=null) {
+                    actionBar.setTitle(mTitle);
+                }
+
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle("");
+                ActionBar actionBar = getSupportActionBar();
+
+                if (actionBar!=null) {
+                    actionBar.setTitle("");
+                }
+
             }
+
+
+
         };
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(mDrawerToggle);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
 
+        if (actionBar!=null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+        if(currentSection<=0)
+        {
+            currentSection = R.id.drawer_gallery;
+            currentIndex = 0;
+            executeRequest();
+        }
+        else
+        {
+            findViewById(R.id.loading).setVisibility(View.GONE);
+        }
+
+        view.setCheckedItem(currentSection);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (outState==null)
+            outState = new Bundle();
+        outState.putInt("lastSection", currentSection);
+        outState.putCharSequence("mTitle", mTitle);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentSection = savedInstanceState.getInt("lastSection",-1);
+        mTitle = savedInstanceState.getCharSequence("mTitle");
+    }
+
+    private void executeRequest() {
+        switch (currentSection)
+        {
+            case R.id.drawer_gallery:
+            {
+                currentIndex = 0;
+                retrievePictures();
+                return;
+            }
+
+            default:
+                // update the main content by replacing fragments
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(currentSection))
+                        .commit();
+                break;
+        }
+    }
+
+    private void retrievePictures()
+    {
+        if (currentIndex==0) {
+            pictures = new ArrayList<>();
+        }
+
+        currentIndex++;
+        findViewById(R.id.loading).setVisibility(View.VISIBLE);
+        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+        MFCRequest.INSTANCE.getGalleryService().getGalleryForUser(settings.getString(getString(R.string.prompt_email), ""), currentIndex, new Callback<PictureGallery>() {
+            @Override
+            public void success(PictureGallery pictureGallery, Response response) {
+                Resources res = getResources();
+                int num = Integer.parseInt(pictureGallery.getGallery().getNumPictures());
+                mTitle = res.getQuantityString(R.plurals.pictures, num, num);
+
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(mTitle);
+                }
+
+                pictures.addAll(pictureGallery.getGallery().getPicture());
+
+                if (currentIndex==Integer.parseInt(pictureGallery.getGallery().getNumPages())){
+
+                    // update the main content by replacing fragments
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    pictureGallery.getGallery().setPicture(pictures);
+                    GalleryFragment fragment = GalleryFragment.newInstance(pictureGallery.getGallery());
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commitAllowingStateLoss();
+
+                    findViewById(R.id.loading).setVisibility(View.GONE);
+
+                }else
+                {
+                    retrievePictures();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 
     @Override
@@ -104,24 +236,16 @@ public class MainActivity extends AppCompatActivity
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
-    }
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
+            case R.id.drawer_home:
                 mTitle = getString(R.string.title_section1);
                 break;
-            case 2:
+            case R.id.drawer_favourite:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case 3:
+            case R.id.drawer_settings:
                 mTitle = getString(R.string.title_section3);
                 break;
         }
@@ -130,8 +254,10 @@ public class MainActivity extends AppCompatActivity
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        if (actionBar!=null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
 
     }
 
@@ -166,10 +292,16 @@ public class MainActivity extends AppCompatActivity
                 return true;
 
             case R.id.action_settings:
+                retrievePictures();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**
@@ -200,8 +332,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_main, container, false);
         }
 
         @Override

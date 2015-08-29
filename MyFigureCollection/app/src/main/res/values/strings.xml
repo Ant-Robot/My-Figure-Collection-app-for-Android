@@ -16,4 +16,15 @@
     <string name="action_example">Example action</string>
     <string name="drawer_close">Close menu</string>
     <string name="drawer_open">Open menu</string>
+    <string name="collection">Collection</string>
+    <string name="gallery">Gallery</string>
+
+    <plurals name="pictures">
+        <item quantity="one">%1$d Picture</item>
+        <item quantity="other">%1$d Pictures</item>
+    </plurals>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="picture">Picture</string>
 </resources>

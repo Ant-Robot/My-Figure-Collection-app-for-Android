@@ -2,23 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
         android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_gallery"
+            android:checked="true"
+            android:title="@string/gallery"/>
 
         <item
             android:id="@+id/section"
-            android:title="Collection">
+            android:title="@string/collection">
             <menu>
                 <item
                     android:id="@+id/drawer_home"
-                    android:checked="true"
-                    android:title="Owned"/>
+                    android:title="@string/title_section1"/>
 
                 <item
                     android:id="@+id/drawer_favourite"
-                    android:title="Ordered"/>
+                    android:title="@string/title_section2"/>
 
                 <item
                     android:id="@+id/drawer_settings"
-                    android:title="Wished"/>
+                    android:title="@string/title_section3"/>
 
             </menu>
         </item>

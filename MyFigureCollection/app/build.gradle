@@ -50,6 +50,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.8'
     compile 'com.google.guava:guava:18.0'
     compile 'com.ant_robot:mfc.api:0.0.4'
+    compile 'de.greenrobot:eventbus:2.4.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
         transitive = true;
     }

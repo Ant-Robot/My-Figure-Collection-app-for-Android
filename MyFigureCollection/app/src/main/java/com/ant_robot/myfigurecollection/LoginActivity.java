@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,9 @@ import android.widget.TextView;
 
 import com.ant_robot.mfc.api.request.MFCRequest;
 import com.crashlytics.android.Crashlytics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 import retrofit.Callback;
@@ -53,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {//implements LoaderCallbac
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        //populateAutoComplete();
+        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -90,9 +95,18 @@ public class LoginActivity extends AppCompatActivity {//implements LoaderCallbac
 
     }
 
-    //private void populateAutoComplete() {
-    //    getLoaderManager().initLoader(0, null, this);
-    //}
+    private void populateAutoComplete() {
+        //getLoaderManager().initLoader(0, null, this);
+        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+        String login = settings.getString(getString(R.string.prompt_email),null);
+        if (login!=null)
+        {
+            List<String> users = new ArrayList<>(1);
+            users.add(login);
+            addEmailsToAutoComplete(users);
+        }
+
+    }
 
 
     /**
@@ -107,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {//implements LoaderCallbac
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        final String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -149,9 +163,12 @@ public class LoginActivity extends AppCompatActivity {//implements LoaderCallbac
 
                     if (aBoolean && response.getBody().length() == 0) {
                         Log.d("MFC", "login success : " + response.getBody().length());
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
+                        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+                        if (settings.edit().putString(getString(R.string.prompt_email), email).commit()) {
+                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                        }
                     } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
                         mPasswordView.requestFocus();
@@ -242,16 +259,16 @@ public class LoginActivity extends AppCompatActivity {//implements LoaderCallbac
         int IS_PRIMARY = 1;
     }
 
-
+ */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(LoginActivity.this,
+                new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
     }
-    */
+
 
 }
 
