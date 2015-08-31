@@ -30,7 +30,7 @@ android {
 }
 
 repositories {
-    maven { url 'https://github.com/Ant-Robot/My-Figure-Collection-Android-SDK/raw/maven/'}
+    maven { url 'https://dl.bintray.com/climbatize/maven/'}
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -47,9 +47,10 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'io.reactivex:rxjava:1.0.8'
     compile 'com.google.guava:guava:18.0'
-    compile 'com.ant_robot:mfc.api:0.0.4'
+    compile 'com.ant_robot:mfc.api:0.0.4.1'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
         transitive = true;

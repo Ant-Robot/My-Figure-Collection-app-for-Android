@@ -12,15 +12,15 @@
             android:title="@string/collection">
             <menu>
                 <item
-                    android:id="@+id/drawer_home"
+                    android:id="@+id/drawer_owned"
                     android:title="@string/title_section1"/>
 
                 <item
-                    android:id="@+id/drawer_favourite"
+                    android:id="@+id/drawer_ordered"
                     android:title="@string/title_section2"/>
 
                 <item
-                    android:id="@+id/drawer_settings"
+                    android:id="@+id/drawer_wished"
                     android:title="@string/title_section3"/>
 
             </menu>

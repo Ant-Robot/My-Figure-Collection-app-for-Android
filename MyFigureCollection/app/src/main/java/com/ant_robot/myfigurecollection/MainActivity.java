@@ -1,5 +1,6 @@
 package com.ant_robot.myfigurecollection;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -21,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import com.ant_robot.mfc.api.pojo.Item;
+import com.ant_robot.mfc.api.pojo.ItemList;
 import com.ant_robot.mfc.api.pojo.Picture;
 import com.ant_robot.mfc.api.pojo.PictureGallery;
 import com.ant_robot.mfc.api.request.MFCRequest;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
     List<Picture> pictures;
     int currentIndex;
     int currentSection;
+    private ArrayList<Item> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,11 +163,13 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
         switch (currentSection)
         {
             case R.id.drawer_gallery:
-            {
                 currentIndex = 0;
                 retrievePictures();
-                return;
-            }
+            break;
+            case R.id.drawer_owned:
+                currentIndex = 0;
+                retrieveCollection();
+                break;
 
             default:
                 // update the main content by replacing fragments
@@ -174,6 +180,92 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
                 break;
         }
     }
+
+    private void retrieveCollection() {
+        if (currentIndex==0)
+        {
+            items = new ArrayList<>();
+        }
+
+        currentIndex++;
+        findViewById(R.id.loading).setVisibility(View.VISIBLE);
+        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+
+        Callback<ItemList> callback = new Callback<ItemList>() {
+            @Override
+            public void success(ItemList itemList, Response response) {
+                Resources res = getResources();
+                int num = 0;
+                int pages = 0;
+                switch (currentSection)
+                {
+                    case R.id.drawer_owned:
+                        num = Integer.parseInt(itemList.getCollection().getOwned().getNumItems());
+                        pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        break;
+                    case R.id.drawer_ordered:
+                        num = Integer.parseInt(itemList.getCollection().getOrdered().getNumItems());
+                        pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        break;
+                    case R.id.drawer_wished:
+                        num = Integer.parseInt(itemList.getCollection().getOwned().getNumItems());
+                        pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        break;
+                }
+
+                mTitle = res.getQuantityString(R.plurals.pictures, num, num);
+
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(mTitle);
+                }
+
+                pictures.addAll(pictureGallery.getGallery().getPicture());
+
+                if (currentIndex==Integer.parseInt(pictureGallery.getGallery().getNumPages())){
+
+                    // update the main content by replacing fragments
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    pictureGallery.getGallery().setPicture(pictures);
+                    GalleryFragment fragment = GalleryFragment.newInstance(pictureGallery.getGallery());
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, fragment)
+                            .commitAllowingStateLoss();
+
+                    findViewById(R.id.loading).setVisibility(View.GONE);
+
+                }else
+                {
+                    retrievePictures();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        };
+
+        switch (currentSection)
+        {
+            case R.id.drawer_owned:
+            MFCRequest.INSTANCE.getCollectionService().getOwned(settings.getString(getString(R.string.prompt_email), ""),currentIndex,callback);
+                break;
+            case R.id.drawer_ordered:
+                MFCRequest.INSTANCE.getCollectionService().getOrdered(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
+                break;
+            case R.id.drawer_wished:
+                MFCRequest.INSTANCE.getCollectionService().getWished(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
+                break;
+        }
+    }
+
+    public void showImage(View view)
+    {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String)view.getTag()));
+        startActivity(webIntent);
+    }
+
 
     private void retrievePictures()
     {
@@ -239,13 +331,13 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case R.id.drawer_home:
+            case R.id.drawer_owned:
                 mTitle = getString(R.string.title_section1);
                 break;
-            case R.id.drawer_favourite:
+            case R.id.drawer_ordered:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case R.id.drawer_settings:
+            case R.id.drawer_wished:
                 mTitle = getString(R.string.title_section3);
                 break;
         }

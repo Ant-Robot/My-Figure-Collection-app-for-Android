@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
@@ -12,25 +13,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ant_robot.mfc.api.pojo.Collection;
+import com.ant_robot.mfc.api.pojo.Item;
+
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GalleryFragment.OnFragmentInteractionListener} interface
+ * {@link ItemsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GalleryFragment#newInstance} factory method to
+ * Use the {@link ItemsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GalleryFragment extends Fragment {
+public class ItemsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private com.ant_robot.mfc.api.pojo.Gallery mGallery;
+    private List<Item> items;
 
 
 
@@ -43,28 +49,28 @@ public class GalleryFragment extends Fragment {
      * @return A new instance of fragment GalleryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GalleryFragment newInstance(com.ant_robot.mfc.api.pojo.Gallery gallery) {
-        GalleryFragment fragment = new GalleryFragment();
-        fragment.mGallery = gallery;
+    public static ItemsFragment newInstance(List<Item> items) {
+        ItemsFragment fragment = new ItemsFragment();
+        fragment.items = items;
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public GalleryFragment() {
+    public ItemsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mGallery==null)
-            mGallery = (com.ant_robot.mfc.api.pojo.Gallery)EventBus.getDefault().removeStickyEvent(com.ant_robot.mfc.api.pojo.Gallery.class);
+        if (items==null)
+            items = (List<Item>)EventBus.getDefault().removeStickyEvent(List.class);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        EventBus.getDefault().postSticky(mGallery);
+        EventBus.getDefault().postSticky(items);
         super.onSaveInstanceState(outState);
     }
 
@@ -79,13 +85,13 @@ public class GalleryFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         SpacesItemDecoration decoration = new SpacesItemDecoration((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
         mRecyclerView.addItemDecoration(decoration);
 
         // specify an adapter (see also next example)
-        mAdapter = new MasonryAdapter(getContext(),mGallery.getPicture());
+        mAdapter = new ItemAdapter(getContext(),items);
         mRecyclerView.setAdapter(mAdapter);
         return v;
     }
