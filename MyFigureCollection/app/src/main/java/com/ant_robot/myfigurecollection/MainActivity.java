@@ -36,7 +36,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends AppCompatActivity implements GalleryFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -57,12 +57,12 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState!=null)
-        currentSection = savedInstanceState.getInt("lastSection",-1);
+        if (savedInstanceState != null)
+            currentSection = savedInstanceState.getInt("lastSection", -1);
 
         setContentView(R.layout.activity_main);
 
-       
+
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -79,11 +79,9 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
                 executeRequest();
 
 
-
                 return true;
             }
         });
-
 
 
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
                 ActionBar actionBar = getSupportActionBar();
 
-                if (actionBar!=null) {
+                if (actionBar != null) {
                     actionBar.setTitle(mTitle);
                 }
 
@@ -109,12 +107,11 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
             public void onDrawerOpened(View drawerView) {
                 ActionBar actionBar = getSupportActionBar();
 
-                if (actionBar!=null) {
+                if (actionBar != null) {
                     actionBar.setTitle("");
                 }
 
             }
-
 
 
         };
@@ -124,18 +121,15 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
         ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar!=null) {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
-        if(currentSection<=0)
-        {
+        if (currentSection <= 0) {
             currentSection = R.id.drawer_gallery;
             currentIndex = 0;
             executeRequest();
-        }
-        else
-        {
+        } else {
             findViewById(R.id.loading).setVisibility(View.GONE);
         }
 
@@ -145,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (outState==null)
+        if (outState == null)
             outState = new Bundle();
         outState.putInt("lastSection", currentSection);
         outState.putCharSequence("mTitle", mTitle);
@@ -155,18 +149,19 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        currentSection = savedInstanceState.getInt("lastSection",-1);
+        currentSection = savedInstanceState.getInt("lastSection", -1);
         mTitle = savedInstanceState.getCharSequence("mTitle");
     }
 
     private void executeRequest() {
-        switch (currentSection)
-        {
+        switch (currentSection) {
             case R.id.drawer_gallery:
                 currentIndex = 0;
                 retrievePictures();
-            break;
+                break;
             case R.id.drawer_owned:
+            case R.id.drawer_wished:
+            case R.id.drawer_ordered:
                 currentIndex = 0;
                 retrieveCollection();
                 break;
@@ -182,8 +177,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
     }
 
     private void retrieveCollection() {
-        if (currentIndex==0)
-        {
+        if (currentIndex == 0) {
             items = new ArrayList<>();
         }
 
@@ -197,46 +191,45 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
                 Resources res = getResources();
                 int num = 0;
                 int pages = 0;
-                switch (currentSection)
-                {
+                switch (currentSection) {
                     case R.id.drawer_owned:
                         num = Integer.parseInt(itemList.getCollection().getOwned().getNumItems());
                         pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        items.addAll(itemList.getCollection().getOwned().getItem());
                         break;
                     case R.id.drawer_ordered:
                         num = Integer.parseInt(itemList.getCollection().getOrdered().getNumItems());
-                        pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        pages = Integer.parseInt(itemList.getCollection().getOrdered().getNumPages());
+                        items.addAll(itemList.getCollection().getOrdered().getItem());
                         break;
                     case R.id.drawer_wished:
-                        num = Integer.parseInt(itemList.getCollection().getOwned().getNumItems());
-                        pages = Integer.parseInt(itemList.getCollection().getOwned().getNumPages());
+                        num = Integer.parseInt(itemList.getCollection().getWished().getNumItems());
+                        pages = Integer.parseInt(itemList.getCollection().getWished().getNumPages());
+                        items.addAll(itemList.getCollection().getWished().getItem());
                         break;
                 }
 
-                mTitle = res.getQuantityString(R.plurals.pictures, num, num);
+                mTitle = res.getQuantityString(R.plurals.items, num, num);
 
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setTitle(mTitle);
                 }
 
-                pictures.addAll(pictureGallery.getGallery().getPicture());
 
-                if (currentIndex==Integer.parseInt(pictureGallery.getGallery().getNumPages())){
+                if (currentIndex == pages) {
 
                     // update the main content by replacing fragments
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    pictureGallery.getGallery().setPicture(pictures);
-                    GalleryFragment fragment = GalleryFragment.newInstance(pictureGallery.getGallery());
+                    ItemsFragment fragment = ItemsFragment.newInstance(items);
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, fragment)
                             .commitAllowingStateLoss();
 
                     findViewById(R.id.loading).setVisibility(View.GONE);
 
-                }else
-                {
-                    retrievePictures();
+                } else {
+                    retrieveCollection();
                 }
             }
 
@@ -246,10 +239,9 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
             }
         };
 
-        switch (currentSection)
-        {
+        switch (currentSection) {
             case R.id.drawer_owned:
-            MFCRequest.INSTANCE.getCollectionService().getOwned(settings.getString(getString(R.string.prompt_email), ""),currentIndex,callback);
+                MFCRequest.INSTANCE.getCollectionService().getOwned(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
                 break;
             case R.id.drawer_ordered:
                 MFCRequest.INSTANCE.getCollectionService().getOrdered(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
@@ -260,16 +252,14 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
         }
     }
 
-    public void showImage(View view)
-    {
-        Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String)view.getTag()));
+    public void showImage(View view) {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) view.getTag()));
         startActivity(webIntent);
     }
 
 
-    private void retrievePictures()
-    {
-        if (currentIndex==0) {
+    private void retrievePictures() {
+        if (currentIndex == 0) {
             pictures = new ArrayList<>();
         }
 
@@ -290,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
                 pictures.addAll(pictureGallery.getGallery().getPicture());
 
-                if (currentIndex==Integer.parseInt(pictureGallery.getGallery().getNumPages())){
+                if (currentIndex == Integer.parseInt(pictureGallery.getGallery().getNumPages())) {
 
                     // update the main content by replacing fragments
                     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -302,8 +292,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
                     findViewById(R.id.loading).setVisibility(View.GONE);
 
-                }else
-                {
+                } else {
                     retrievePictures();
                 }
             }
@@ -346,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar!=null) {
+        if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(mTitle);
         }
@@ -375,10 +364,9 @@ public class MainActivity extends AppCompatActivity implements GalleryFragment.O
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                else {
+                } else {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;

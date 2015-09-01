@@ -12,13 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import de.greenrobot.event.EventBus;
+import com.ant_robot.mfc.api.pojo.Gallery;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GalleryFragment.OnFragmentInteractionListener} interface
+ * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link GalleryFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -30,8 +30,7 @@ public class GalleryFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private com.ant_robot.mfc.api.pojo.Gallery mGallery;
-
+    private Gallery mGallery;
 
 
     private OnFragmentInteractionListener mListener;
@@ -58,13 +57,14 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mGallery==null)
-            mGallery = (com.ant_robot.mfc.api.pojo.Gallery)EventBus.getDefault().removeStickyEvent(com.ant_robot.mfc.api.pojo.Gallery.class);
+        if (mGallery == null)
+            mGallery = savedInstanceState.getParcelable("gallery");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        EventBus.getDefault().postSticky(mGallery);
+        if (outState == null) outState = new Bundle();
+        outState.putParcelable("gallery", mGallery);
         super.onSaveInstanceState(outState);
     }
 
@@ -72,7 +72,7 @@ public class GalleryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_gallery, container, false);
+        View v = inflater.inflate(R.layout.fragment_gallery, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -85,7 +85,7 @@ public class GalleryFragment extends Fragment {
         mRecyclerView.addItemDecoration(decoration);
 
         // specify an adapter (see also next example)
-        mAdapter = new MasonryAdapter(getContext(),mGallery.getPicture());
+        mAdapter = new MasonryAdapter(getContext(), mGallery.getPicture());
         mRecyclerView.setAdapter(mAdapter);
         return v;
     }
@@ -115,36 +115,23 @@ public class GalleryFragment extends Fragment {
     }
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
         private final int mSpace;
+
         public SpacesItemDecoration(int space) {
             this.mSpace = space;
         }
+
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             int pos = parent.getChildAdapterPosition(view);
-            outRect.left = mSpace/(2);
-            outRect.right = mSpace/(2);
-            outRect.bottom = mSpace/2;
+            outRect.left = mSpace / (2);
+            outRect.right = mSpace / (2);
+            outRect.bottom = mSpace / 2;
             // Add top margin only for the first item to avoid double space between items
-           if (pos < 2)
+            if (pos < 2)
                 outRect.top = mSpace;
-            else outRect.bottom = mSpace/2;
+            else outRect.bottom = mSpace / 2;
         }
     }
 

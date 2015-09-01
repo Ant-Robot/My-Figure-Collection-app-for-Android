@@ -6,7 +6,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
 
         <Button
@@ -38,8 +39,8 @@
                 <ProgressBar
                     android:id="@+id/progress"
                     style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -52,20 +53,16 @@
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/img_container"
                 android:layout_toRightOf="@+id/img_container"
-                android:background="#FFFF"
-                android:gravity="center"
                 android:padding="2dp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/itam_copyright"
+                android:id="@+id/item_copyright"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/item_name"
                 android:layout_alignStart="@+id/item_name"
                 android:layout_below="@+id/item_name"
-                android:background="#FFFF"
-                android:gravity="center"
                 android:padding="2dp"
                 android:textStyle="bold" />
         </RelativeLayout>

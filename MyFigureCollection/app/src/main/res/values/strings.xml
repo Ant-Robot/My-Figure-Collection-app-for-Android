@@ -23,8 +23,12 @@
         <item quantity="one">%1$d Picture</item>
         <item quantity="other">%1$d Pictures</item>
     </plurals>
+    <plurals name="items">
+        <item quantity="one">%1$d Item</item>
+        <item quantity="other">%1$d Items</item>
+    </plurals>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="picture">Picture</string>
     <string name="action_refresh">refresh</string>
