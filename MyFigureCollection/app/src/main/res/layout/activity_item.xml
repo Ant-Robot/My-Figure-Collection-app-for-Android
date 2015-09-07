@@ -1,0 +1,54 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ant_robot.myfigurecollection.ItemActivity"
+    tools:ignore="MergeRootFrame">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/img_container"
+            android:layout_width="67dp"
+            android:layout_height="67dp"
+
+
+
+            >
+
+            <ImageView
+                android:id="@+id/img_shadow"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_gravity="end|bottom"
+                android:alpha="0.3"
+                android:background="@drawable/circle" />
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/picture"
+                android:transitionName="img"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/img_bg"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:background="@drawable/circle" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:visibility="gone" />
+        </FrameLayout>
+    </FrameLayout>
+</FrameLayout>

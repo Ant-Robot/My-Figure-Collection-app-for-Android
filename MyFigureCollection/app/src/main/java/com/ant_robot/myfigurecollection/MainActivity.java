@@ -5,8 +5,11 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Parcelable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,18 +18,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.ImageView;
 
 import com.ant_robot.mfc.api.pojo.Item;
 import com.ant_robot.mfc.api.pojo.ItemList;
 import com.ant_robot.mfc.api.pojo.Picture;
 import com.ant_robot.mfc.api.pojo.PictureGallery;
+import com.ant_robot.mfc.api.pojo.UserProfile;
 import com.ant_robot.mfc.api.request.MFCRequest;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     int currentIndex;
     int currentSection;
     private ArrayList<Item> items;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         setContentView(R.layout.activity_main);
 
+        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+        username = settings.getString(getString(R.string.prompt_email), "");
 
         mTitle = getTitle();
 
@@ -72,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                Snackbar.make(findViewById(R.id.container), menuItem.getTitle() + " pressed", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.container),getString(R.string.retireving, menuItem.getTitle()), Snackbar.LENGTH_LONG).show();
                 menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
                 currentSection = menuItem.getItemId();
@@ -108,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 ActionBar actionBar = getSupportActionBar();
 
                 if (actionBar != null) {
-                    actionBar.setTitle("");
+                    actionBar.setTitle(username);
                 }
 
             }
@@ -119,6 +129,22 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(mDrawerToggle);
 
+        MFCRequest.INSTANCE.getUserService().getUser(username, new Callback<UserProfile>() {
+            @Override
+            public void success(UserProfile userProfile, Response response) {
+                Picasso.with(MainActivity.this).load("http://s1.tsuki-board.net/pics/avatar/200/" + userProfile.getUser().getPicture()).into((ImageView) drawerLayout.findViewById(R.id.avatar));
+                username = userProfile.getUser().getName();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+
+
+
+
         ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -127,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         }
         if (currentSection <= 0) {
             currentSection = R.id.drawer_gallery;
-            currentIndex = 0;
             executeRequest();
         } else {
             findViewById(R.id.loading).setVisibility(View.GONE);
@@ -143,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             outState = new Bundle();
         outState.putInt("lastSection", currentSection);
         outState.putCharSequence("mTitle", mTitle);
+        outState.putString("username", username);
         super.onSaveInstanceState(outState);
     }
 
@@ -151,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         super.onRestoreInstanceState(savedInstanceState);
         currentSection = savedInstanceState.getInt("lastSection", -1);
         mTitle = savedInstanceState.getCharSequence("mTitle");
+        username = savedInstanceState.getString("username");
     }
 
     private void executeRequest() {
@@ -183,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         currentIndex++;
         findViewById(R.id.loading).setVisibility(View.VISIBLE);
-        SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
 
         Callback<ItemList> callback = new Callback<ItemList>() {
             @Override
@@ -235,19 +261,20 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
             @Override
             public void failure(RetrofitError error) {
-
+                Snackbar.make(findViewById(R.id.container),getString(R.string.retireving_error, "collection"), Snackbar.LENGTH_LONG).show();
+                findViewById(R.id.loading).setVisibility(View.GONE);
             }
         };
 
         switch (currentSection) {
             case R.id.drawer_owned:
-                MFCRequest.INSTANCE.getCollectionService().getOwned(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
+                MFCRequest.INSTANCE.getCollectionService().getOwned(username, currentIndex, callback);
                 break;
             case R.id.drawer_ordered:
-                MFCRequest.INSTANCE.getCollectionService().getOrdered(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
+                MFCRequest.INSTANCE.getCollectionService().getOrdered(username, currentIndex, callback);
                 break;
             case R.id.drawer_wished:
-                MFCRequest.INSTANCE.getCollectionService().getWished(settings.getString(getString(R.string.prompt_email), ""), currentIndex, callback);
+                MFCRequest.INSTANCE.getCollectionService().getWished(username, currentIndex, callback);
                 break;
         }
     }
@@ -255,6 +282,21 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public void showImage(View view) {
         Intent webIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) view.getTag()));
         startActivity(webIntent);
+    }
+
+    public void showItem(View view)
+    {
+        Intent intent = new Intent(this, ItemActivity.class);
+// Pass data object in the bundle and populate details activity.
+        intent.putExtra(ItemActivity.EXTRA_ITEM, (Parcelable) view.getTag(R.id.item_name));
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(this, (View) view.getTag(R.id.img_container), "img");
+            startActivity(intent, options.toBundle());
+        }else
+        {
+            startActivity(intent);
+        }
     }
 
 
@@ -266,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         currentIndex++;
         findViewById(R.id.loading).setVisibility(View.VISIBLE);
         SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
-        MFCRequest.INSTANCE.getGalleryService().getGalleryForUser(settings.getString(getString(R.string.prompt_email), ""), currentIndex, new Callback<PictureGallery>() {
+        MFCRequest.INSTANCE.getGalleryService().getGalleryForUser(username, currentIndex, new Callback<PictureGallery>() {
             @Override
             public void success(PictureGallery pictureGallery, Response response) {
                 Resources res = getResources();
@@ -299,7 +341,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
             @Override
             public void failure(RetrofitError error) {
-
+                Snackbar.make(findViewById(R.id.container),getString(R.string.retireving_error, "gallery ("+error.getMessage()+")"), Snackbar.LENGTH_LONG).show();
+                Log.d("MFC",error.getMessage());
+                findViewById(R.id.loading).setVisibility(View.GONE);
             }
         });
     }

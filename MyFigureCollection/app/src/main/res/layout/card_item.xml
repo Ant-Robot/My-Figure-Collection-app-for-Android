@@ -15,32 +15,64 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/transparent_ripple"
-            android:onClick="showImage" />
+            android:onClick="showItem" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="5dp">
 
-            <FrameLayout
-                android:id="@+id/img_container"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/textView_category"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="2dp"
+                android:textStyle="italic"
+                android:layout_toLeftOf="@+id/item_name"
+                android:layout_toStartOf="@+id/item_name"
+                android:layout_below="@+id/img_container"
+                />
+
+            <FrameLayout
+
+                android:id="@+id/img_container"
+                android:layout_width="67dp"
+                android:layout_height="67dp"
+
+
+                >
+
+                <ImageView
+                    android:id="@+id/img_shadow"
+                    android:layout_gravity="end|bottom"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:background="@drawable/circle"
+                    android:alpha="0.3"/>
 
                 <ImageView
                     android:id="@+id/img"
-
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/picture"
+                    android:transitionName="img"
                     android:scaleType="centerCrop" />
+                <ImageView
+                    android:id="@+id/img_bg"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:background="@drawable/circle" />
 
                 <ProgressBar
                     android:id="@+id/progress"
                     style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -48,23 +80,23 @@
                 android:id="@+id/item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_toEndOf="@+id/img_container"
-                android:layout_toRightOf="@+id/img_container"
                 android:padding="2dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_alignTop="@+id/img_container"
+                android:layout_toRightOf="@+id/img_container"
+                android:layout_toEndOf="@+id/img_container" />
 
             <TextView
                 android:id="@+id/item_copyright"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/item_name"
-                android:layout_alignStart="@+id/item_name"
-                android:layout_below="@+id/item_name"
                 android:padding="2dp"
-                android:textStyle="bold" />
+                android:textStyle="italic"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+
         </RelativeLayout>
 
     </FrameLayout>

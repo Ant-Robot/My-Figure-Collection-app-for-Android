@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="BaseTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
@@ -11,6 +11,7 @@
     </style>
 
     <style name="LoginTheme" parent="AppTheme"/>
+
 
     <style name="MFCButton">
         <item name="android:textColor">@color/primary_text</item>

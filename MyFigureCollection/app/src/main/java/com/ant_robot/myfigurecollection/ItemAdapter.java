@@ -7,6 +7,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
@@ -60,7 +61,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemView> {
     public class ItemView extends RecyclerView.ViewHolder {
         CardView holder;
         ImageView imageView;
+        ImageView imageCircle;
         TextView textView;
+        TextView textViewCat;
         ProgressBar spinner;
         Button button;
 
@@ -68,7 +71,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemView> {
             super(itemView);
             holder = itemView;
             imageView = (ImageView) itemView.findViewById(R.id.img);
+            imageCircle = (ImageView) itemView.findViewById(R.id.img_bg);
             textView = (TextView) itemView.findViewById(R.id.item_name);
+            textViewCat = (TextView) itemView.findViewById(R.id.textView_category);
             spinner = (ProgressBar) itemView.findViewById(R.id.progress);
             button = (Button) itemView.findViewById(R.id.button);
         }
@@ -78,12 +83,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemView> {
             String color = item.getCategory().getColor();
             //Drawable d = getPicture(item.getSrc());
             String name = item.getData().getName();
-            button.setTag(id);
+            button.setTag(R.id.item_name,item);
+            button.setTag(R.id.img_container,imageView);
             //imageView.setImageDrawable(d);
             textView.setText(name);
             textView.setVisibility((name == null || name.length() == 0) ? View.GONE : View.VISIBLE);
             spinner.setVisibility(View.VISIBLE);
-            holder.setCardBackgroundColor((color != null && color.length() > 0) ? Color.parseColor(color) : Color.WHITE);
+
+            final int colorCat = (color != null && color.length() > 0) ? Color.parseColor(color) : Color.GRAY;
+            imageCircle.getBackground().setColorFilter(colorCat, PorterDuff.Mode.MULTIPLY);
+            textViewCat.setText(item.getCategory().getName());
+            textViewCat.setTextColor(colorCat);
+
             Picasso.with(ItemAdapter.this.context).load("http://myfigurecollection.net/pics/figure/" + id+".jpg").placeholder(R.drawable.mfclogo).transform(new CircleTransform()).into(imageView, new Callback() {
                 @Override
                 public void onSuccess() {

@@ -134,7 +134,7 @@ public class ItemsFragment extends Fragment {
             outRect.right = mSpace/(2);
             outRect.bottom = mSpace/2;
             // Add top margin only for the first item to avoid double space between items
-           if (pos < 2)
+           if (pos==0)
                 outRect.top = mSpace;
             else outRect.bottom = mSpace/2;
         }
