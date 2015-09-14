@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,8 +70,17 @@ public class ItemsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (outState==null) outState = new Bundle();
+
         outState.putParcelableArrayList("items", new ArrayList(items));
+
+
+
         super.onSaveInstanceState(outState);
+
+        for (Item it :
+                items) {
+            Log.v("MFC", "item " + it.getData().getName() + " date " + it.getData().getReleaseDate());
+        }
     }
 
     @Override
